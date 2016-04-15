@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VirtusosCode</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/photon.css">
+
+    <!-- Javascript -->
+    <script src="js/index.js" charset="utf-8"></script>
+
+  </head>
+  <body onload="listDistros(distrosList); listDevs();">
+    <div class="window">
+
+      <!-- .toolbar-header sits at the top of your app -->
+      <header class="toolbar toolbar-header">
+        <h1 class="title">Virty</h1>
+        <center>Boots Your Distros</center>
+
+      </header>
+      <!-- Your app's content goes inside .window-content -->
+        <center>
+          <div class="toolbar-actions"><p></p>
+            Select ISO file:
+            <button onclick="openIso()" class="btn btn-default">
+              <span id="fileSelect" class="icon icon-dot-3"></span>
+            </button>
+              Download:
+            <select id="enum-distros" onclick="selectDistro()" class="btn btn-default btn-dropdown">
+            <option selected="true" style="display:none;">Distro</option>
+            </select>
+            <button class="btn btn-default pull-right">
+                <span class="icon icon-heart"></span>
+            </button><p></p>
+          </div>
+        </center>
+        <hr>
+      <div class="window-content">
+        <div class="pane-group">
+          <div class="pane pane-sm sidebar">
+            <nav class="nav-group">
+              <h5 id="dev-status" class="nav-group-title">Devices</h5>
+              <span id="dev-list" class="nav-group-item">
+                <!--Here is generated a list of devices with the folowing sentence: <span class="icon icon icon-drive"></span> /dev/sda -->
+              </span>
+            </nav>
+          </div>
+          <div class="pane">
+            <div id="dev-details" class="dev-details">
+              dev-details:
+              <p id="detail-device"></p>
+              <p id="detail-description"></p>
+              <p id="detail-size"></p>
+              <p id="detail-mountpoint"></p>
+              <p id="detail-name"></p>
+              <p id="detail-size"></p>
+              <p id="detail-system"></p>
+            </div>
+            <div id="distro-details" class="dev-details">
+              distro-details:
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="toolbar toolbar-footer">
+        <div class="toolbar-actions">
+          <button id="btn-download" onclick="confirmWrite()" class="btn btn-primary pull-right">
+            Create
+          </button>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

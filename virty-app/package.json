@@ -1,0 +1,10 @@
+{
+  "name": "Virty",
+  "version": "0.0.1",
+  "description": "Virty Boots Your Distros",
+  "main": "app.js",
+  "author": "Bruno Fosados",
+  "scripts": {
+    "start": "electron ."
+  }
+}
