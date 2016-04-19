@@ -14,6 +14,8 @@
  var devRoute = null;
  var devSelected = false;
 
+ var spawn = require('child_process').spawn;
+ var ls = spawn('ls', ['-lh', '/usr']);
 
 
 
@@ -172,5 +174,26 @@ function confirmWrite() {
 }
 
 function ddWrites(){
+  var util  = require('util'),
+      spawn = require('child_process').spawn,
+      dd    = spawn('../bin/dcfldd', ['if=' + fileNameRoute, 'of=' + devRoute]);
 
+  dd.stdout.on('data', function (data) {
+    console.log('stdout: ' + data);
+  });
+
+  dd.stderr.on('data', function (data) {
+    console.log('stderr: ' + data);
+  });
+
+  dd.on('exit', function (code) {
+    console.log('child process exited with code ' + code);
+    if(code !== 0) {
+      dd.stderr.on('data', function (data) {
+      console.log('stderr: ' + data);
+      });
+    } else{
+      console.log(fileName + " VirtyDrive succesfully created");
+    }
+  });
 }
