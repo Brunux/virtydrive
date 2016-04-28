@@ -8,15 +8,12 @@
  var fileNameRoute = null;
  var fileName = null;
  var fileChoosed = false;
- var fileDownload = false;
+ var downloadFile = false;
+ var checksumFileDownloaded = null;
  var distroToDownload = null;
  var devs = [];
  var devRoute = null;
  var devSelected = false;
-
- var spawn = require('child_process').spawn;
- var ls = spawn('ls', ['-lh', '/usr']);
-
 
 
 function listDistros(distrosList){
@@ -33,17 +30,7 @@ function selectDistro() {
   distroToDownload = distros.options[distros.selectedIndex].index;
   console.log (distroToDownload);
   document.getElementById('btn-download').innerHTML = "Download & Create";
-  fileDownload = true;
-}
-
-function downloadDistro(distro){
-  /*
-  Get iso file from distrosList[distro].link check the checksum
-  save the file location in varriable:"fileNameRoute" and "fileName" verify all with a try
-  then set "fileChoosed = true"
-  */
-  fileChoosed = true;
-
+  downloadFile = true;
 }
 
 function listDevs() {
@@ -102,9 +89,111 @@ function openIso() {
     document.getElementById('enum-distros').innerHTML = resetDevList;
     listDistros(distrosList);
     document.getElementById('btn-download').innerHTML = "Create";
-    fileDownload = false;
+    downloadFile = false;
     }
  });
+}
+
+function downloadDistro(){
+  var progress = require('progress-stream');
+  var req = require('request');
+  var fs = require('fs');
+  var log = require('single-line-log').stdout;
+  var numeral = require('numeral');
+
+  fileName = distrosList[distroToDownload].name.replace(/\s+/g, '_') + '.iso';
+  fileNameRoute = 'downloads/' + fileName;
+
+  var str = progress({
+    drain: true,
+    time: 1000,
+    length: distrosList[distroToDownload].size
+  }, function(progress) {
+    console.log('Running: ' + numeral(progress.runtime).format('00:00:00') + '\n' +
+      numeral(progress.speed).format('0.00b') + '/s ' + Math.round(progress.percentage*0.000001) + '% ' + '(' +
+      numeral(progress.transferred).format('0.0b') + ')' );
+  });
+
+  // In the request a callback function is passed to checksum the iso file downloaded
+  // VERIFICAR QUE CHECKSUM ESTA ENTREGANGO require('checksume') que se compara con el checksum del JSON
+  req(distrosList[distroToDownload].link, function (){
+    var checksum = require('checksum');
+    checksum.file(fileNameRoute, function (err, sum) {
+      if(err === null && distrosList[distroToDownload].checkSum === sum) {
+        console.log(sum);
+        fileChoosed = true;
+        ddWrites();
+      } else {
+        console.log (err);
+        fileChoosed = false;
+      }
+    });
+  }).pipe(str).pipe(fs.createWriteStream(fileNameRoute));
+
+  console.log('progress-stream using request module - downloading 10 MB file');
+}
+
+function confirmWrite() {
+  if (downloadFile){
+    try {
+      downloadDistro();
+      } catch (err) {
+      infoDownloadFail();
+      /*
+        Set diferent dialog for erros:
+        No enough space on hdd
+        No Internet conection
+        ...
+      */
+      fileChoosed = false;
+      infoCheckSumFail();
+      return;
+    }
+  } else {
+    ddWrites();
+  }
+}
+
+function ddWrites(){
+  if(devSelected) {
+    if(fileChoosed) {
+      var confirmWriteResponse = dialog.showMessageBox({
+        type: "question",
+        buttons: ["Cancel", "Yes" ],
+        title : "Write ISO file",
+        message: "Please confirm",
+        detail: "All data on " + devRoute + " will be overwriten with " + fileName + " data.\n Would you like to proceed?"
+      });
+      if (confirmWriteResponse === 1) {
+        var util  = require('util'),
+            spawn = require('child_process').spawn,
+            dd    = spawn('../bin/dcfldd', ['if=' + fileNameRoute, 'of=' + devRoute]);
+
+        dd.stdout.on('data', function (data) {
+          console.log('stdout: ' + data);
+        });
+
+        dd.stderr.on('data', function (data) {
+          console.log('stderr: ' + data);
+        });
+
+        dd.on('exit', function (code) {
+          console.log('child process exited with code ' + code);
+          if(code !== 0) {
+            dd.stderr.on('data', function (data) {
+            console.log('stderr: ' + data);
+            });
+          } else {
+            console.log(fileName + " VirtyDrive succesfully created");
+          }
+        });
+      }
+    } else {
+      infoSelectSourceFile();
+    }
+  } else {
+    infoSelectDev();
+  }
 }
 
 function infoSelectSourceFile() {
@@ -137,63 +226,12 @@ function infoDownloadFail(){
   });
 }
 
-function confirmWrite() {
-  if (fileDownload === true){
-    try {
-      downloadDistro(distroToDownload);
-    } catch (err) {
-      infoDownloadFail();
-      /*
-        Set diferent dialog for erros:
-        No enough space on hdd
-        No Internet conection
-        ...
-      */
-    }
-  }
-  if(devSelected) {
-    if(fileChoosed) {
-      var confirmWriteResponse = dialog.showMessageBox({
-        type: "question",
-        buttons: ["Cancel", "Yes" ],
-        title : "Write ISO file",
-        message: "Please confirm",
-        detail: "All data on " + devRoute + " will be overwriten with " + fileName + " data.\n Would you like to proceed?"
-      });
-      if (confirmWriteResponse === 1) {
-        ddWrites();
-      } else {
-        return;
-      }
-    } else {
-      infoSelectSourceFile();
-    }
-  } else {
-    infoSelectDev();
-  }
-}
-
-function ddWrites(){
-  var util  = require('util'),
-      spawn = require('child_process').spawn,
-      dd    = spawn('../bin/dcfldd', ['if=' + fileNameRoute, 'of=' + devRoute]);
-
-  dd.stdout.on('data', function (data) {
-    console.log('stdout: ' + data);
-  });
-
-  dd.stderr.on('data', function (data) {
-    console.log('stderr: ' + data);
-  });
-
-  dd.on('exit', function (code) {
-    console.log('child process exited with code ' + code);
-    if(code !== 0) {
-      dd.stderr.on('data', function (data) {
-      console.log('stderr: ' + data);
-      });
-    } else{
-      console.log(fileName + " VirtyDrive succesfully created");
-    }
+function infoCheckSumFail(){
+  dialog.showMessageBox({
+    type: "info",
+    buttons: ["OK"],
+    title : "Fail",
+    message: "",
+    detail: "CheckSum fail! Please, check that you have enough space avalable on disk"
   });
 }
