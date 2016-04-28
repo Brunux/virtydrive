@@ -14,7 +14,7 @@ Currently supports TOP-10 DistroWatch plus 2 distros for the RapsberryPI Proyect
 |Manjaro|16.06|64-bit|Desktop|
 |Majeia|6|64-bit|Desktop|
 |CentOS|7|64-bit|Server|
-|ArchLinux|2016.04.01|64-bit|Muli|
+|ArchLinux|2016.04.01|64-bit|Multi|
 |ElementaryOS|0.3.2|64-bit|Desktop|
 |Noobs|1.9.0|ARM|Desktop|
 |Rasbian|8.4|ARM|Multi|
