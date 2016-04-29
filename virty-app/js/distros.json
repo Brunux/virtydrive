@@ -1,4 +1,5 @@
 [ {"name": "Linux Mint 17.3", "arch": "64-bit", "purpose": "Desktop", "checkSum": "e71a2aad8b58605e906dbea444dc4983", "link": "http://mirrors.kernel.org/linuxmint//stable/17.3/linuxmint-17.3-cinnamon-64bit.iso", "size": 680},
+  {"name": "Debug Linux", "arch": "64-bit", "purpose": "Debug", "checkSum": "f1c9645dbc14efddc7d8a322685f26eb", "link": "http://speedtest.ftp.otenet.gr/files/test10Mb.db", "size": 10},
   {"name": "Debian 8", "arch": "64-bit", "purpose": "Desktop", "checkSum": "c58a9df992d6e119121babbac9bb5a13", "link": "http://cdimage.debian.org/debian-cd/8.4.0/amd64/iso-cd/debian-8.4.0-amd64-CD-1.iso", "size": 630},
   {"name": "Ubuntu 16.04", "arch": "64-bit", "purpose": "Desktop", "checkSum": "###", "link": "", "size": 680},
   {"name": "Open SUSE 42.1", "arch": "64-bit", "purpose": "Desktop", "checkSum": "6a748b5b71290004b1dce3fc66bc013a", "link": "http://download.opensuse.org/tumbleweed/iso/openSUSE-Tumbleweed-GNOME-Live-x86_64-Current.iso", "size": 680},
