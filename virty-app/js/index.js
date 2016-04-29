@@ -104,33 +104,61 @@ function downloadDistro(){
   fileName = distrosList[distroToDownload].name.replace(/\s+/g, '_') + '.iso';
   fileNameRoute = 'downloads/' + fileName;
 
+  basicModal.show({
+    body: '<center><img src="../img/ajax_loader_rocket_48.gif"><p id="download-progress"></p></center>',
+    closable: true,
+    buttons: {
+        action: {
+            title: 'Cancel',
+            fn: basicModal.close
+        }
+    }
+  });
+
   var str = progress({
     drain: true,
     time: 1000,
     length: distrosList[distroToDownload].size
   }, function(progress) {
-    console.log('Running: ' + numeral(progress.runtime).format('00:00:00') + '\n' +
+    document.getElementById('download-progress').innerHTML = 'Running: ' + numeral(progress.runtime).format('00:00:00') + '\n' +
       numeral(progress.speed).format('0.00b') + '/s ' + Math.round(progress.percentage*0.000001) + '% ' + '(' +
-      numeral(progress.transferred).format('0.0b') + ')' );
+      numeral(progress.transferred).format('0.0b') + ')';
   });
 
-  // In the request a callback function is passed to checksum the iso file downloaded
-  // VERIFICAR QUE CHECKSUM ESTA ENTREGANGO require('checksume') que se compara con el checksum del JSON
-  req(distrosList[distroToDownload].link, function (){
-    var checksum = require('checksum');
-    checksum.file(fileNameRoute, function (err, sum) {
-      if(err === null && distrosList[distroToDownload].checkSum === sum) {
-        console.log(sum);
-        fileChoosed = true;
-        ddWrites();
-      } else {
-        console.log (err);
-        fileChoosed = false;
-      }
-    });
-  }).pipe(str).pipe(fs.createWriteStream(fileNameRoute));
+  req(distrosList[distroToDownload].link, function() { basicModal.close(); }).pipe(str).pipe(fs.createWriteStream(fileNameRoute));
+  console.log('Downloading....');
+}
 
-  console.log('progress-stream using request module - downloading 10 MB file');
+// ENCONTRAR COMO HACE QUE EL CHECKSUME INICIE DESPUES DEL DOWNLOAD DEL ISO
+// VERIFICAR QUE CHECKSUM QUE SE ESTA ENTREGANDO POR require('checksume') SE COMPARE DE FORMA CORRECTA CON EL DEL JSON
+
+function checkSum() {
+  basicModal.show({
+    body: '<center id="checksum-center"><img id="checksum-loader" src="../img/ajax_loader_rocket_48.gif"><p id="checksum">Checksuming... plase wait</p></center>',
+    closable: true,
+    buttons: {
+        action: {
+            title: 'Close',
+            fn: basicModal.close
+        }
+    }
+  });
+  var parent = document.getElementById("checksum-center");
+  var child = document.getElementById("checksum-loader");
+  var checksum = require('checksum');
+  checksum.file(fileNameRoute, function (err, sum) {
+  if(err === null && distrosList[distroToDownload].checkSum === 'f1c9645dbc14efddc7d8a322685f26eb') {
+    parent.removeChild(child);
+    document.getElementById('checksum').innerHTML = 'Awesome!<br>Checksums match!<br>' + sum;
+    fileChoosed = true;
+    ddWrites();
+  } else {
+    parent.removeChild(child);
+    document.getElementById('checksum').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again<br>' + sum;
+    console.log (err);
+    fileChoosed = false;
+  }
+});
 }
 
 function confirmWrite() {
