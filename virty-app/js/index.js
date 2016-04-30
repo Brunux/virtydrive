@@ -29,8 +29,10 @@ function selectDistro() {
   var distros = document.getElementById("enum-distros");
   distroToDownload = distros.options[distros.selectedIndex].index;
   console.log (distroToDownload);
-  document.getElementById('btn-download').innerHTML = "Download & Create";
-  downloadFile = true;
+  if(distroToDownload != distrosList.length) {
+    document.getElementById('btn-download').innerHTML = "Download & Create";
+    downloadFile = true;
+  }
 }
 
 function listDevs() {
@@ -161,6 +163,17 @@ function checkSum() {
 });
 }
 
+function checkPlatform() {
+  var OpSys = require('os');
+  var hostInfo = {
+    'platform' : OpSys.platform(),
+    'arch' : OpSys.arch(),
+    'type' : OpSys.type()
+  };
+  console.log(hostInfo);
+  return hostInfo;
+}
+
 function confirmWrite() {
   if (downloadFile){
     try {
@@ -193,9 +206,18 @@ function ddWrites(){
         detail: "All data on " + devRoute + " will be overwriten with " + fileName + " data.\n Would you like to proceed?"
       });
       if (confirmWriteResponse === 1) {
+        var dd_bin = '';
+        var hostInfo = checkPlatform();
+
+        if (hostInfo.plarform === 'win32' || hostInfo.plarform === 'win64') {
+          dd_bin = '../bin/dd';
+        } else {
+          dd_bin = 'dd';
+        }
+
         var util  = require('util'),
             spawn = require('child_process').spawn,
-            dd    = spawn('../bin/dcfldd', ['if=' + fileNameRoute, 'of=' + devRoute]);
+            dd    = spawn(dd_bin, ['if=' + fileNameRoute, 'of=' + devRoute]);
 
         dd.stdout.on('data', function (data) {
           console.log('stdout: ' + data);
