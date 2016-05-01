@@ -70,7 +70,11 @@ function devDetails(devId){
   console.log(devDetailsKeys);
 
   for(i=0; i < devDetailsKeys.length; i++){
-    document.getElementById("detail-"+devDetailsKeys[i]).innerHTML = devDetailsValues[i];
+    if (devDetailsValues[i] === null) {
+      document.getElementById("detail-"+devDetailsKeys[i]).innerHTML = 'none';
+    } else {
+      document.getElementById("detail-"+devDetailsKeys[i]).innerHTML = devDetailsValues[i];
+    }
   }
 
   document.getElementById('dev-details').style.display = 'block';
@@ -188,8 +192,10 @@ function confirmWrite() {
       infoCheckSumFail();
       return;
     }
-  } else {
+  } else if(fileChoosed) {
     checkPlatform();
+  } else {
+    infoSelectSourceFile();
   }
 }
 
