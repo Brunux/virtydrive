@@ -48,7 +48,7 @@ function listDevs() {
           document.getElementById('dev-status').innerHTML = "Devices";
           document.getElementById('dev-list').innerHTML = addDevHtml + disks[i].name + "</div>";
         } else {
-          var noDevHtml = "<p></p><div onclick=\"listDevs()\"><span class=\"icon icon-arrows-ccw\"></span>";
+          var noDevHtml = "<p></p><div onclick=\"infoCheckDevs();\"><span class=\"icon icon-arrows-ccw\"></span>";
           document.getElementById('dev-status').innerHTML = "<center>No devices found please connect one</center>";
           document.getElementById('dev-list').innerHTML = noDevHtml + "Click here to reload devs</div>";
         }
@@ -105,17 +105,6 @@ function openIso() {
 
 function downloadDistro(){
   if (devSelected) {
-    basicModal.show({
-    body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg"></p></center>',
-    closable: true,
-    buttons: {
-        action: {
-            title: 'Cancel',
-            fn: basicModal.close
-        }
-      }
-    });
-
     var progress = require('progress-stream');
     var req = require('request');
     var log = require('single-line-log').stdout;
@@ -324,5 +313,19 @@ function infoCheckOSFail(){
     title : "Fail",
     message: "",
     detail: "No operation system was detected, please make sure to run this as administrator or root"
+  });
+}
+
+function infoCheckDevs(){
+  basicModal.show({
+  body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checking for Drives</p></center>',
+  closable: true,
+  callback: function() { setTimeout(basicModal.close, 3000); setTimeout(listDevs, 3000);},
+  buttons: {
+      action: {
+          title: 'Please wait', //Investigar como cancelar el download iniciado
+          fn: basicModal.visible
+      }
+    }
   });
 }
