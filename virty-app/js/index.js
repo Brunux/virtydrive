@@ -209,9 +209,9 @@ function ddWrites(){
         body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg"></p></center>',
         closable: true,
         buttons: {
-        action: {
-            title: 'Please wait',
-            fn: basicModal.close
+          action: {
+              title: 'Please wait',
+              fn: basicModal.visible
             }
           }
         });
@@ -219,42 +219,49 @@ function ddWrites(){
         var dd_bin = null;
 
         if (hostInfo.platform === 'win32' || hostInfo.platform === 'win64') {
-          dd_bin = '../bin/dd.exe';
+          dd_bin = '../bin/dcfldd.exe';
         } else if (hostInfo.platform === 'linux') {
           dd_bin = '../bin/dcfldd';
-          var util  = require('util'),
-              spawn = require('child_process').spawn,
-              dd    = spawn(dd_bin, ['if=' + fileNameRoute, 'of=' + devRoute]);
-
-          dd.stdout.on('data', function (data) {
-            document.getElementById('alert-msg').innerHTML = 'Warning: ' + data;
-            console.log('stdout: ' + data);
-          });
-
-          dd.stderr.on('data', function (data) {
-            document.getElementById('alert-msg').innerHTML = 'Writing: ' + data + '<br>';
-            console.log('stderr: ' + data);
-          });
-
-          dd.on('exit', function (code) {
-            console.log('child process exited with code ' + code);
-            if(code !== 0) {
-              document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
-              dd.stderr.on('data', function (data) {
-              document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-              document.getElementById('alert-msg').innerHTML = 'Error:<br>' + data;
-              });
-            } else {
-              document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-              document.getElementById('alert-msg').innerHTML = 'VirtyDrive succesfully created<br>' + fileName + ' on: ' + devRoute;
-              document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Finish</a>';
-            }
-          });
         } else if(hostInfo.platform === 'darwin') {
-          dd_bin = '../bin/osxdd';
+          dd_bin = 'dcfldd';
         } else {
           infoCheckOSFail();
         }
+
+        var util  = require('util'),
+        spawn = require('child_process').spawn,
+        dd    = spawn(dd_bin, ['if=' + fileNameRoute, 'of=' + devRoute]);
+
+        dd.stdout.on('data', function (data) {
+          document.getElementById('alert-msg').innerHTML = 'Warning: ' + data;
+          console.log('stdout: ' + data);
+        });
+
+        dd.stderr.on('data', function (data) {
+          document.getElementById('alert-msg').innerHTML = 'Writing: ' + data;
+          console.log('stderr: ' + data);
+          if(data.toString().split(" ").length > 4){
+            console.log('Spliting... ');
+            var dataSplited = data.toString().split(" ");
+            console.log(dataSplited);
+            document.getElementById('alert-msg').innerHTML = 'Synchronising Data<br>' + dataSplited[dataSplited.length-3].replace("↵", '') + ' Records';
+          }
+        });
+
+        dd.on('exit', function (code) {
+          console.log('child process exited with code ' + code);
+          if(code !== 0) {
+            document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
+            dd.stderr.on('data', function (data) {
+            document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
+            document.getElementById('alert-msg').innerHTML = 'Error:<br>' + data;
+            });
+          } else {
+            document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
+            document.getElementById('alert-msg').innerHTML = 'VirtyDrive succesfully created!<br>' + fileName + ' on: ' + devRoute;
+            document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Finish</a>';
+          }
+        });
       }
     } else {
       infoSelectSourceFile();
