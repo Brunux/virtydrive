@@ -1,5 +1,6 @@
 
  var remote = require('remote');
+ var fs = require('fs');
  var dialog = remote.require('dialog');
  var drivelist = require('../node_modules/drivelist');
 
@@ -14,6 +15,8 @@
  var devs = [];
  var devRoute = null;
  var devSelected = false;
+
+ var hostInfo = null;
 
 
 function listDistros(distrosList){
@@ -97,81 +100,76 @@ function openIso() {
 }
 
 function downloadDistro(){
-  var progress = require('progress-stream');
-  var req = require('request');
-  var fs = require('fs');
-  var log = require('single-line-log').stdout;
-  var numeral = require('numeral');
-
-  fileName = distrosList[distroToDownload].name.replace(/\s+/g, '_') + '.iso';
-  fileNameRoute = 'downloads/' + fileName;
-
-  basicModal.show({
-    body: '<center><img src="../img/ajax_loader_rocket_48.gif"><p id="download-progress"></p></center>',
+  if (devSelected) {
+    basicModal.show({
+    body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg"></p></center>',
     closable: true,
     buttons: {
         action: {
             title: 'Cancel',
             fn: basicModal.close
         }
-    }
-  });
+      }
+    });
 
-  var str = progress({
-    drain: true,
-    time: 1000,
-    length: distrosList[distroToDownload].size
-  }, function(progress) {
-    document.getElementById('download-progress').innerHTML = 'Running: ' + numeral(progress.runtime).format('00:00:00') + '\n' +
-      numeral(progress.speed).format('0.00b') + '/s ' + Math.round(progress.percentage*0.000001) + '% ' + '(' +
-      numeral(progress.transferred).format('0.0b') + ')';
-  });
+    var progress = require('progress-stream');
+    var req = require('request');
+    var log = require('single-line-log').stdout;
+    var numeral = require('numeral');
 
-  req(distrosList[distroToDownload].link, function() { basicModal.close(); }).pipe(str).pipe(fs.createWriteStream(fileNameRoute));
-  console.log('Downloading....');
+    fileName = distrosList[distroToDownload].name.replace(/\s+/g, '_') + '.iso';
+    fileNameRoute = 'downloads/' + fileName;
+
+    var str = progress({
+      drain: true,
+      time: 1000,
+      length: distrosList[distroToDownload].size
+    }, function(progress) {
+      document.getElementById('alert-msg').innerHTML = 'Running: ' + numeral(progress.runtime).format('00:00:00') + '\n' +
+        numeral(progress.speed).format('0.00b') + '/s ' + Math.round(progress.percentage*0.000001) + '% ' + '(' +
+        numeral(progress.transferred).format('0.0b') + ')';
+    });
+
+    req(distrosList[distroToDownload].link, function() {
+      checkSum();
+    }).pipe(str).pipe(fs.createWriteStream(fileNameRoute));
+    console.log('Downloading....');
+
+  } else {
+    infoSelectDev();
+  }
 }
 
-// ENCONTRAR COMO HACE QUE EL CHECKSUME INICIE DESPUES DEL DOWNLOAD DEL ISO
-// VERIFICAR QUE CHECKSUM QUE SE ESTA ENTREGANDO POR require('checksume') SE COMPARE DE FORMA CORRECTA CON EL DEL JSON
-
 function checkSum() {
-  basicModal.show({
-    body: '<center id="checksum-center"><img id="checksum-loader" src="../img/ajax_loader_rocket_48.gif"><p id="checksum">Checksuming... plase wait</p></center>',
-    closable: true,
-    buttons: {
-        action: {
-            title: 'Close',
-            fn: basicModal.close
-        }
+  document.getElementById('alert-msg').innerHTML = 'Checksuming... this could take awhile, please wait.';
+  var md5 = require('md5');
+
+  fs.readFile(fileNameRoute, function(err, buf) {
+    var checksumFile = (md5(buf));
+
+    if(err === null && distrosList[distroToDownload].checkSum === checksumFile) {
+      document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
+      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksums match!<br>' + checksumFile;
+      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="setTimeout(checkPlatform, 1000); basicModal.close();">Continue</a>';
+      fileChoosed = true;
+  } else {
+      document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
+      document.getElementById('alert-msg').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again.<br>' + checksumFile;
+      console.log (err);
+      fileChoosed = false;
     }
   });
-  var parent = document.getElementById("checksum-center");
-  var child = document.getElementById("checksum-loader");
-  var checksum = require('checksum');
-  checksum.file(fileNameRoute, function (err, sum) {
-  if(err === null && distrosList[distroToDownload].checkSum === 'f1c9645dbc14efddc7d8a322685f26eb') {
-    parent.removeChild(child);
-    document.getElementById('checksum').innerHTML = 'Awesome!<br>Checksums match!<br>' + sum;
-    fileChoosed = true;
-    ddWrites();
-  } else {
-    parent.removeChild(child);
-    document.getElementById('checksum').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again<br>' + sum;
-    console.log (err);
-    fileChoosed = false;
-  }
-});
 }
 
 function checkPlatform() {
   var OpSys = require('os');
-  var hostInfo = {
+  hostInfo = {
     'platform' : OpSys.platform(),
     'arch' : OpSys.arch(),
     'type' : OpSys.type()
   };
   console.log(hostInfo);
-  return hostInfo;
+  ddWrites();
 }
 
 function confirmWrite() {
@@ -207,7 +205,6 @@ function ddWrites(){
       });
       if (confirmWriteResponse === 1) {
         var dd_bin = '';
-        var hostInfo = checkPlatform();
 
         if (hostInfo.plarform === 'win32' || hostInfo.plarform === 'win64') {
           dd_bin = '../bin/dd';
@@ -282,6 +279,6 @@ function infoCheckSumFail(){
     buttons: ["OK"],
     title : "Fail",
     message: "",
-    detail: "CheckSum fail! Please, check that you have enough space avalable on disk"
+    detail: "Download/Checksum fail! Please, check that you have enough space and writing permissions avalable on disk"
   });
 }
