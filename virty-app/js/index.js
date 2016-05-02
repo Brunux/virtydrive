@@ -18,6 +18,7 @@
 
  var hostInfo = null;
 
+ var checksumFile = null;
 
 function listDistros(distrosList){
   var enumDistros = document.getElementById("enum-distros");
@@ -34,6 +35,16 @@ function selectDistro() {
   console.log (distroToDownload);
   if(distroToDownload != distrosList.length) {
     document.getElementById('btn-download').innerHTML = "Download & Create";
+    document.getElementById('iso-table').style.display = 'none';
+    //Refactor this with a for and map loop
+    document.getElementById('distro-name').innerHTML = distrosList[distroToDownload].name;
+    document.getElementById('distro-arch').innerHTML = distrosList[distroToDownload].arch;
+    document.getElementById('distro-purpose').innerHTML = distrosList[distroToDownload].purpose;
+    document.getElementById('distro-checkSum').innerHTML = distrosList[distroToDownload].checkSum;
+    document.getElementById('distro-link').innerHTML = distrosList[distroToDownload].link;
+    document.getElementById('distro-size').innerHTML = distrosList[distroToDownload].size + ' MB';
+    document.getElementById('distro-details').style.display = 'block';
+    document.getElementById('distro-table').style.display = 'block';
     downloadFile = true;
   }
 }
@@ -98,6 +109,14 @@ function openIso() {
     document.getElementById('enum-distros').innerHTML = resetDevList;
     listDistros(distrosList);
     document.getElementById('btn-download').innerHTML = "Create";
+    document.getElementById('distro-table').style.display = 'none';
+    document.getElementById('distro-details').style.display = 'block';
+    document.getElementById('iso-table').style.display = 'block';
+    // Update values with iso info
+    document.getElementById('iso-file').innerHTML = fileName;
+    document.getElementById('iso-location').innerHTML = fileNameRoute;
+    document.getElementById('iso-checksum').innerHTML = 'XXXXX'; // Set checksume
+    document.getElementById('iso-size').innerHTML = '0000' + ' MB'; // Set size
     downloadFile = false;
     }
  });
@@ -124,7 +143,7 @@ function downloadDistro(){
     });
 
     req(distrosList[distroToDownload].link, function() {
-      checkSum();
+      checkSumDownload();
     }).pipe(str).pipe(fs.createWriteStream(fileNameRoute));
     console.log('Downloading....');
 
@@ -133,12 +152,12 @@ function downloadDistro(){
   }
 }
 
-function checkSum() {
+function checkSumDownload() {
   document.getElementById('alert-msg').innerHTML = 'Checksuming... this could take awhile, please wait.';
   var md5 = require('md5');
 
   fs.readFile(fileNameRoute, function(err, buf) {
-    var checksumFile = (md5(buf));
+    checksumFile = (md5(buf));
 
     if(err === null && distrosList[distroToDownload].checkSum === checksumFile) {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
@@ -153,6 +172,38 @@ function checkSum() {
     }
   });
 }
+
+//Modify this to ask the user if he/she wants to checksuming the file
+function checkSumIso() {
+  basicModal.show({
+  body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checksuming... this could take awhile, please wait.</p></center>',
+  closable: true,
+  buttons: {
+      action: {
+          title: 'Please wait',
+          fn: basicModal.visible
+      }
+    }
+  });
+  var md5 = require('md5');
+
+  fs.readFile(fileNameRoute, function(err, buf) {
+    checksumFile = (md5(buf));
+
+    if(err === null) {
+      document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
+      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksum Finsh:<br>' + checksumFile;
+      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="setTimeout(checkPlatform, 1000); basicModal.close();">Continue</a>';
+      fileChoosed = true;
+  } else {
+      document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
+      document.getElementById('alert-msg').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again.<br>' + checksumFile;
+      console.log (err);
+      fileChoosed = false;
+    }
+  });
+}
+
 
 function checkPlatform() {
   var OpSys = require('os');
@@ -323,7 +374,7 @@ function infoCheckDevs(){
   callback: function() { setTimeout(basicModal.close, 3000); setTimeout(listDevs, 3000);},
   buttons: {
       action: {
-          title: 'Please wait', //Investigar como cancelar el download iniciado
+          title: 'Please wait',
           fn: basicModal.visible
       }
     }

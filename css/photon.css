@@ -2343,4 +2343,13 @@ td:last-child {
 .dev-details {
   display: none;
 }
+.distro-details {
+  display: none;
+}
 
+.distro-table {
+  display: none;
+}
+.iso-table {
+  display: none;
+}

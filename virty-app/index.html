@@ -77,10 +77,10 @@
               <hr>
             </div>
             <br>
-            <div id="distro-details" class="">
+            <div id="distro-details" class="distro-details">
             <center><h4>About Your New Linux</h4></center>
               <hr>
-              <table class="table-striped">
+              <table id="distro-table" class="table-striped distro-table">
                 <thead>
                   <tr>
                     <th>Distro</th>
@@ -90,27 +90,53 @@
                 <tbody>
                   <tr>
                     <td>Name</td>
-                    <td id="detail-name">This is an example of name</td>
+                    <td id="distro-name"></td>
                   </tr>
                   <tr>
                     <td>Arch</td>
-                    <td id="detail-arch"></td>
+                    <td id="distro-arch"></td>
                   </tr>
                   <tr>
                     <td>Purpose</td>
-                    <td id="detail-purpose"></td>
+                    <td id="distro-purpose"></td>
                   </tr>
                   <tr>
                     <td>CheckSum</td>
-                    <td id="detail-checkSum"></td>
+                    <td id="distro-checkSum"></td>
                   </tr>
                   <tr>
                     <td>Download</td>
-                    <td id="detail-link"></td>
+                    <td id="distro-link"></td>
                   </tr>
                   <tr>
                     <td>Size</td>
-                    <td id="detail-size"></td>
+                    <td id="distro-size"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table id="iso-table" class="table-striped iso-table">
+                <thead>
+                  <tr>
+                    <th>Iso File</th>
+                    <th>Info</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Name</td>
+                    <td id="iso-file"></td>
+                  </tr>
+                  <tr>
+                    <td>Location</td>
+                    <td id="iso-location"></td>
+                  </tr>
+                  <tr>
+                    <td>CheckSum</td>
+                    <td id="iso-checksum"></td>
+                  </tr>
+                  <tr>
+                    <td>Size</td>
+                    <td id="iso-size"></td>
                   </tr>
                 </tbody>
               </table>
