@@ -1,8 +1,8 @@
 # VirtyDrive
 VirtyDrive setups your Linux isos on USB Drives, works on Windows, OSX and Linux.
 
-Handy-Dandy tool for booting diferent Linux distros from USB Drives.
-Currently supports TOP-10 DistroWatch plus 2 distros for the RapsberryPI Proyect:
+Handy-Dandy tool for booting different Linux distros from USB Drives.
+Currently supports TOP-10 DistroWatch plus 2 distros for the RapsberryPI Project
 
 |Name|Version|Arch|Porpuse|
 |:---:|:----:|:---:|:----:|
@@ -21,7 +21,21 @@ Currently supports TOP-10 DistroWatch plus 2 distros for the RapsberryPI Proyect
 
 *__Note__* that this is a live list so it will be update from time to time depending on distroswatch stats.
 
-Virty will download the selected distro and write it to a **USB/SD-Card** Drive selected.
-If you have a iso file of a diferent dristo you can also write it the same way.
+Virty will download the selected distro and write it to a **USB/SD-Card** Drive selected. If you have a iso file of a different dristo you can also write it the same way.
 
-Please share me :)
+VirtyDrive is based on [electron](https://github.com/electron/electron) framework please download it and install it globally.
+
+Then run:
+
+1. user$ `mkdir development; cd development`
+2. user$ `git clone https://github.com/Brunux/virtydrive.git`
+3. user$ `cd virtydrive`
+4. root# `electron /virty-app` why root? Writing to /devs needs elevated privileges.
+5. test it
+6. ...
+7. fork our repo
+8. code
+9. code
+10. make PR
+
+Please share :)
