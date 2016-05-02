@@ -56,9 +56,9 @@ function listDevs() {
       //if (error) throw error;
       for(var i=0; i < disks.length; i++){
         if(disks[i].system === false) {
-          var addDevHtml = "<div id=\"dev-" + i + "\" onclick=\"devDetails(this.id)\"><span class=\"icon icon icon-drive\"></span>";
+          var addDevHtml = '<div id="dev-' + i + '" onclick="devDetails(this.id)"><span class="icon icon icon-drive"></span>' + disks[i].name + '</div><br>';
           document.getElementById('dev-status').innerHTML = "Devices";
-          document.getElementById('dev-list').innerHTML = addDevHtml + disks[i].name + '</div>';
+          document.getElementById('dev-list').insertAdjacentHTML('beforeend', addDevHtml);
         } else {
           document.getElementById('dev-status').innerHTML = "<center>No devices found please connect one</center>";
         }
