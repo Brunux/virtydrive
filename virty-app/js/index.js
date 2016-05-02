@@ -14,6 +14,7 @@
  var distroToDownload = null;
  var devs = [];
  var devRoute = null;
+ var devSelectedName = null;
  var devSelected = false;
 
  var hostInfo = null;
@@ -70,6 +71,7 @@ function devDetails(devId){
   var devIndex = devIndexSplited[1];
   console.log(devs[devIndex]);
   devRoute = devs[devIndex].device;
+  devSelectedName = devs[devIndex].name;
   devSelected = true;
 
 
@@ -245,7 +247,7 @@ function ddWrites(){
         buttons: ["Cancel", "Yes" ],
         title : "Write ISO file",
         message: "Please confirm",
-        detail: "All data on " + devRoute + " will be overwriten with " + fileName + " data.\n Would you like to proceed?"
+        detail: "All data on " + devSelectedName + " will be overwriten with " + fileName + " data.\n Would you like to proceed?"
       });
 
       if (confirmWriteResponse === 1) {
@@ -366,6 +368,8 @@ function infoCheckOSFail(){
 }
 
 function infoCheckDevs(){
+  document.getElementById('dev-details').style.display = 'none';
+  devSelected = false;
   basicModal.show({
   body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checking for Drives</p></center>',
   closable: true,
