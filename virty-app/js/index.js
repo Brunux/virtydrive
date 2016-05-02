@@ -265,7 +265,7 @@ function ddWrites(){
         var dd_bin = null;
 
         if (hostInfo.platform === 'win32' || hostInfo.platform === 'win64') {
-          dd_bin = '../bin/dcfldd.exe';
+          dd_bin = '..\\bin\\dcfldd.exe';
         } else if (hostInfo.platform === 'linux') {
           dd_bin = '../bin/dcfldd';
         } else if(hostInfo.platform === 'darwin') {
@@ -369,6 +369,10 @@ function infoCheckOSFail(){
 
 function infoCheckDevs(){
   document.getElementById('dev-details').style.display = 'none';
+  var allDevs = document.getElementById('dev-list');
+  while (allDevs.hasChildNodes()) {
+    allDevs.removeChild(allDevs.lastChild);
+}
   devSelected = false;
   basicModal.show({
   body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checking for Drives</p></center>',
