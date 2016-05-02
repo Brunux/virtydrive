@@ -101,11 +101,9 @@ function openIso() {
     fileNameRoute = fileDeails[0];
     var fileNameSplited = fileNameRoute.split("/");
     fileName = fileNameSplited[fileNameSplited.length-1];
-    //document.getElementById('fileSelect').innerHTML = fileName;
-
     console.log(fileName);
     fileChoosed = true;
-    var resetDevList = "<option selected=\"true\" style=\"display:none;\">Distro</option>";
+    var resetDevList = '<option selected="true" style="display:none;">Distro</option>';
     document.getElementById('enum-distros').innerHTML = resetDevList;
     listDistros(distrosList);
     document.getElementById('btn-download').innerHTML = "Create";
@@ -369,9 +367,9 @@ function infoCheckOSFail(){
 
 function infoCheckDevs(){
   document.getElementById('dev-details').style.display = 'none';
-  var allDevs = document.getElementById('dev-list');
-  while (allDevs.hasChildNodes()) {
-    allDevs.removeChild(allDevs.lastChild);
+  var allDevsListed = document.getElementById('dev-list');
+  while (allDevsListed.hasChildNodes()) {
+    allDevsListed.removeChild(allDevsListed.lastChild);
 }
   devSelected = false;
   basicModal.show({
