@@ -122,6 +122,16 @@ function openIso() {
 
 function downloadDistro(){
   if (devSelected) {
+    basicModal.show({
+    body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg"></p></center>',
+    closable: true,
+    buttons: {
+      action: {
+          title: 'Cancel',
+          fn: basicModal.close
+        }
+      }
+    });
     var progress = require('progress-stream');
     var req = require('request');
     var log = require('single-line-log').stdout;
