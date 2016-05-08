@@ -270,50 +270,40 @@ function ddWrites(){
           }
         });
 
-        var dd_bin = null;
+        var fs = require('fs');
+        var imageWrite = require('etcher-image-write');
+        var numeral = require('numeral');
 
-        if (hostInfo.platform === 'win32' || hostInfo.platform === 'win64') {
-          dd_bin = '..\\bin\\dcfldd.exe';
-        } else if (hostInfo.platform === 'linux') {
-          dd_bin = '../bin/dcfldd';
-        } else if(hostInfo.platform === 'darwin') {
-          dd_bin = 'dcfldd';
-        } else {
-          infoCheckOSFail();
-        }
+        var myStream = fs.createReadStream(fileNameRoute);
 
-        var util  = require('util'),
-        spawn = require('child_process').spawn,
-        dd    = spawn(dd_bin, ['if=' + fileNameRoute, 'of=' + devRoute]);
-
-        dd.stdout.on('data', function (data) {
-          document.getElementById('alert-msg').innerHTML = 'Warning: ' + data;
-          console.log('stdout: ' + data);
+        var emitter = imageWrite.write(devRoute, myStream, {
+          check: false,
+          size: fs.statSync(fileNameRoute).size
         });
 
-        dd.stderr.on('data', function (data) {
-          document.getElementById('alert-msg').innerHTML = 'Writing: ' + data;
-          console.log('stderr: ' + data);
-          if(data.toString().split(" ").length > 4){
-            console.log('Spliting... ');
-            var dataSplited = data.toString().split(" ");
-            console.log(dataSplited);
-            document.getElementById('alert-msg').innerHTML = 'Synchronising Data<br>' + dataSplited[dataSplited.length-3].replace("↵", '') + ' Records';
-          }
+        emitter.on('progress', function(state) {
+          document.getElementById('alert-msg').innerHTML = 'Writing: ' + Math.round(state.percentage) + '% ' + '(' + numeral(state.transferred).format('0.0b')  + ')<br>' + 'Speed: ' + numeral(state.speed).format('0.00b') + '/s ' + ' ETA: ' + numeral(state.eta).format('00:00:00');
+          console.log(state);
         });
 
-        dd.on('exit', function (code) {
-          console.log('child process exited with code ' + code);
-          if(code !== 0) {
-            document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
-            dd.stderr.on('data', function (data) {
-            document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-            document.getElementById('alert-msg').innerHTML = 'Error:<br>' + data;
-            });
-          } else {
-            document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
+        emitter.on('error', function(error) {
+          document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
+          document.getElementById('alert-msg').innerHTML = error;
+          document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
+          console.error(error);
+        });
+
+        emitter.on('done', function(success) {
+          if (success) {
+            document.getElementById('alert-center').removeChild(document.getElementById("alert-loader"));
             document.getElementById('alert-msg').innerHTML = 'VirtyDrive succesfully created!<br>' + fileName + ' on: ' + devRoute;
             document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Finish</a>';
+            console.log('Success!');
+          } else {
+            document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
+            document.getElementById('alert-msg').innerHTML = 'Ops! something went wrong,<br>Please try again';
+            document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
+            console.log('Failed!');
           }
         });
       }
