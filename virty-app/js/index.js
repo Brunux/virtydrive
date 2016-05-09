@@ -37,13 +37,16 @@ function selectDistro() {
   if(distroToDownload != distrosList.length) {
     document.getElementById('btn-download').innerHTML = "Download & Create";
     document.getElementById('iso-table').style.display = 'none';
-    //Refactor this with a for and map loop
-    document.getElementById('distro-name').innerHTML = distrosList[distroToDownload].name;
-    document.getElementById('distro-arch').innerHTML = distrosList[distroToDownload].arch;
-    document.getElementById('distro-purpose').innerHTML = distrosList[distroToDownload].purpose;
-    document.getElementById('distro-checkSum').innerHTML = distrosList[distroToDownload].checkSum;
-    document.getElementById('distro-link').innerHTML = distrosList[distroToDownload].link;
-    document.getElementById('distro-size').innerHTML = distrosList[distroToDownload].size + ' MB';
+
+    var distroDetailsKeys = Object.keys(distrosList[distroToDownload]);
+    var distroDetailsValues = Object.keys(distrosList[distroToDownload]).map(function (value) {return distrosList[distroToDownload][value];});
+
+    console.log(distroDetailsKeys);
+
+    for(i=0; i < distroDetailsKeys.length; i++){
+        document.getElementById("distro-"+distroDetailsKeys[i]).innerHTML = distroDetailsValues[i];
+      }
+
     document.getElementById('distro-details').style.display = 'block';
     document.getElementById('distro-table').style.display = 'block';
     downloadFile = true;
@@ -161,7 +164,8 @@ function downloadDistro(){
 }
 
 function checkSumDownload() {
-  document.getElementById('alert-msg').innerHTML = 'Checksuming... this could take awhile, please wait.';
+  document.getElementById('alert-msg').innerHTML = 'Checksuming... this could take awhile.';
+  document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="setTimeout(checkPlatform, 1000); basicModal.visible();">Please wait</a>';
   var md5 = require('md5');
 
   fs.readFile(fileNameRoute, function(err, buf) {
@@ -212,18 +216,6 @@ function checkSumIso() {
   });
 }
 
-
-function checkPlatform() {
-  var OpSys = require('os');
-  hostInfo = {
-    'platform' : OpSys.platform(),
-    'arch' : OpSys.arch(),
-    'type' : OpSys.type()
-  };
-  console.log(hostInfo);
-  ddWrites();
-}
-
 function confirmWrite() {
   if (downloadFile){
     try {
@@ -270,7 +262,6 @@ function ddWrites(){
           }
         });
 
-        var fs = require('fs');
         var imageWrite = require('etcher-image-write');
         var numeral = require('numeral');
 
