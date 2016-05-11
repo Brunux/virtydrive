@@ -1,0 +1,42 @@
+{
+  "name": "VirtyDrive",
+  "version": "0.0.1",
+  "description": "Virty Drive Boots Your Distros",
+  "main": "virty-app/app.js",
+  "author": "Bruno Fosados <bruno@virtuososcode.com>",
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "start": "electron virty-app/app.js --enable-logging",
+    "dev": "NODE_ENV='development' npm run start",
+    "dist": "npm run dist:osx && npm run dist:win32 && npm run dist:win64",
+    "dist:osx": "build --platform darwin",
+    "dist:win32": "build --platform win32 --arch ia32",
+    "dist:win64": "build --platform win32 --arch x64"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Brunux/virtydrive.git"
+    },
+  "devDependencies": {
+  },
+  "build": {
+    "app-bundle-id": "com.virtuososcode.virtydrive",
+    "app-category-type": "public.app-category.productivity",
+    "iconUrl": "http://s32.postimg.org/y37ucd8gx/icon.png",
+    "osx": {
+    },
+    "win": {
+    }
+  },
+  "dependencies": {
+    "basicmodal": "^3.3.5",
+    "drivelist": "^3.1.0",
+    "etcher-image-write": "^4.0.2",
+    "md5": "^2.1.0",
+    "numeral": "^1.5.3",
+    "progress-stream": "^1.2.0",
+    "request": "^2.72.0",
+    "single-line-log": "^1.1.1"
+  }
+}

@@ -1,9 +1,9 @@
 {
-  "name": "Virty",
+  "name": "VirtyDrive",
   "version": "0.0.1",
   "description": "Virty Boots Your Distros",
   "main": "app.js",
-  "author": "Bruno Fosados",
+  "author": "Bruno Fosados <bruno@virtuososcode.com>",
   "scripts": {
     "start": "electron ."
   }
