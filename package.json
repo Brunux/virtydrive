@@ -17,20 +17,18 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Brunux/virtydrive.git"
-    },
-  "devDependencies": {
   },
+  "devDependencies": {},
   "build": {
     "app-bundle-id": "com.virtuososcode.virtydrive",
     "app-category-type": "public.app-category.productivity",
     "iconUrl": "http://s32.postimg.org/y37ucd8gx/icon.png",
-    "osx": {
-    },
-    "win": {
-    }
+    "osx": {},
+    "win": {}
   },
   "dependencies": {
     "basicmodal": "^3.3.5",
+    "diskpart": "^1.0.1",
     "drivelist": "^3.1.0",
     "etcher-image-write": "^4.0.2",
     "md5": "^2.1.0",

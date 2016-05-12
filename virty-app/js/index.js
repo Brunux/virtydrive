@@ -2,7 +2,7 @@
  var remote = require('remote');
  var fs = require('fs');
  var dialog = remote.require('dialog');
- var drivelist = require('../node_modules/drivelist');
+ var drivelist = require('drivelist');
 
  var distrosList = require('./js/distros.json');
 
@@ -165,7 +165,7 @@ function downloadDistro(){
 
 function checkSumDownload() {
   document.getElementById('alert-msg').innerHTML = 'Checksuming... this could take awhile.';
-  document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="setTimeout(checkPlatform, 1000); basicModal.visible();">Please wait</a>';
+  document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.visible();">Please wait</a>';
   var md5 = require('md5');
 
   fs.readFile(fileNameRoute, function(err, buf) {
@@ -174,7 +174,7 @@ function checkSumDownload() {
     if(err === null && distrosList[distroToDownload].checkSum === checksumFile) {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
       document.getElementById('alert-msg').innerHTML = 'Awesome... Checksums match!<br>' + checksumFile;
-      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="setTimeout(checkPlatform, 1000); basicModal.close();">Continue</a>';
+      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Continue</a>';
       fileChoosed = true;
   } else {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
@@ -204,8 +204,8 @@ function checkSumIso() {
 
     if(err === null) {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksum Finsh:<br>' + checksumFile;
-      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="setTimeout(checkPlatform, 1000); basicModal.close();">Continue</a>';
+      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksum Finished:<br>' + checksumFile;
+      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Continue</a>';
       fileChoosed = true;
   } else {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
@@ -233,7 +233,7 @@ function confirmWrite() {
       return;
     }
   } else if(fileChoosed) {
-    checkPlatform();
+    ddWrites();
   } else {
     infoSelectSourceFile();
   }
@@ -343,16 +343,6 @@ function infoCheckSumFail(){
     title : "Fail",
     message: "",
     detail: "Download/Checksum fail! Please, check that you have enough space and writing permissions avalable on disk"
-  });
-}
-
-function infoCheckOSFail(){
-  dialog.showMessageBox({
-    type: "info",
-    buttons: ["OK"],
-    title : "Fail",
-    message: "",
-    detail: "No operation system was detected, please make sure to run this as administrator or root"
   });
 }
 
