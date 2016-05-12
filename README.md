@@ -39,3 +39,9 @@ Then run:
 10. make PR
 
 Please share :)
+
+# Alpha Release!!! [VirtyDrive](https://www.dropbox.com/s/bnvlggkcek3zgi0/virtydrive-linux-x64.tar.gz?dl=0)
+
+1. user@LinuxBox$ `tar -xzvf virtydrive-linux-x64.tar.gz`
+2. user@LinuxBox$ `cd virtydrive-linux-x64`
+3. user@LinuxBox$ `sudo ./virtydrive`
