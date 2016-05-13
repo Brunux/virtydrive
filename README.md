@@ -30,9 +30,7 @@ This is the first build, so issues are expected please if you find one [fill it 
 
 Be aware, the way the iso is downloaded consumes lot of RAM memory (the size of the iso file) there is a WIP to fix it.
 
-**[Linux x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-linux-x64.tar.gz)**
-
-run instructions:
+Download **[Linux x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-linux-x64.tar.gz)** run instructions:
 
 1. user@LinuxBox$ `tar -xzvf virtydrive-linux-x64.tar.gz`
 2. user@LinuxBox$ `cd virtydrive-linux-x64`
@@ -40,9 +38,7 @@ run instructions:
 
 ***
 
-**[Windows x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-win32-x64.zip)**
-
-run instructions:
+Download **[Windows x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-win32-x64.zip)** run instructions:
 
 1. Uncompress the file.
 2. Go to the new created directory.
@@ -50,9 +46,9 @@ run instructions:
 
 ***
 
-**[OSX darwin](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-darwin-x64.tar.gz)**
-run instructions: **not yet tested**
-feedback needed...
+Download **[OSX darwin](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-darwin-x64.tar.gz)** run instructions:
+
+1. **not yet tested** feedback needed...
 
 ***
 
