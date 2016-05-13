@@ -179,6 +179,7 @@ function checkSumDownload() {
   } else {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
       document.getElementById('alert-msg').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again.<br>' + checksumFile;
+      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
       console.log (err);
       fileChoosed = false;
     }
