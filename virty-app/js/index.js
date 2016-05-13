@@ -2,7 +2,7 @@
  var remote = require('remote');
  var fs = require('fs');
  var dialog = remote.require('dialog');
- var drivelist = require('drivelist');
+ var drivelist = require('../node_modules/drivelist');
 
  var distrosList = require('./js/distros.json');
 
@@ -135,51 +135,77 @@ function downloadDistro(){
         }
       }
     });
-    var progress = require('progress-stream');
-    var req = require('request');
-    var log = require('single-line-log').stdout;
+    var request = require('request');
     var numeral = require('numeral');
+
+    var filed = require('filed');
 
     fileName = distrosList[distroToDownload].name.replace(/\s+/g, '_') + '.iso';
     fileNameRoute = 'downloads/' + fileName;
 
-    var str = progress({
-      drain: true,
-      time: 1000,
-      length: distrosList[distroToDownload].size
-    }, function(progress) {
-      document.getElementById('alert-msg').innerHTML = 'Running: ' + numeral(progress.runtime).format('00:00:00') + ' ' +
-        numeral(progress.speed).format('0.00b') + '/s ' + Math.round(progress.percentage*0.000001) + '% ' + '(' +
-        numeral(progress.transferred).format('0.0b') + ')';
+    var stream = filed(fileNameRoute);
+    var req = request(distrosList[distroToDownload].link).pipe(stream);
+    var dataLength = null;
+
+    req.on('data', function(data) {
+      dataLength += data.length;
+      document.getElementById('alert-msg').innerHTML = 'Downloading: ' +  numeral(dataLength).format('0.0b');
     });
 
-    req(distrosList[distroToDownload].link, function() {
-      checkSumDownload();
-    }).pipe(str).pipe(fs.createWriteStream(fileNameRoute));
-    console.log('Downloading....');
+    stream.on('end', function () {
+      basicModal.show({
+      body: 'Download: Finished<br>File: ' + fileNameRoute + "<br>Do you wanto to checksum the file?",
+      closable: true,
+      buttons: {
+          cancel: {
+              title: 'Checksume',
+              fn: checkSumDownload
+          },
+          action: {
+              title: 'Just write it!',
+              fn: confirmWrite
+          }
+        }
+      });
+      
+      downloadFile = false;
+      fileChoosed = true;
+    });
 
+    stream.on('error', function (err) {
+      document.getElementById('alert-msg').innerHTML = 'Error downloading the file<br>Please try again';
+      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
+      fileChoosed = false;
+    });
   } else {
     infoSelectDev();
   }
 }
 
 function checkSumDownload() {
-  document.getElementById('alert-msg').innerHTML = 'Checksuming... this could take awhile.';
-  document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.visible();">Please wait</a>';
+  basicModal.show({
+  body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checksuming... this could take awhile, please wait.</p></center>',
+  closable: true,
+  buttons: {
+      action: {
+          title: 'Please wait',
+          fn: basicModal.visible
+      }
+    }
+  });
   var md5 = require('md5');
 
   fs.readFile(fileNameRoute, function(err, buf) {
-    checksumFile = (md5(buf));
+    checksumFile = md5(buf);
 
     if(err === null && distrosList[distroToDownload].checkSum === checksumFile) {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
       document.getElementById('alert-msg').innerHTML = 'Awesome... Checksums match!<br>' + checksumFile;
-      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Continue</a>';
+      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="ddWrites(); basicModal.close();">Continue</a>';
       fileChoosed = true;
   } else {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
       document.getElementById('alert-msg').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again.<br>' + checksumFile;
-      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
       console.log (err);
       fileChoosed = false;
     }
@@ -205,8 +231,8 @@ function checkSumIso() {
 
     if(err === null) {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksum Finished:<br>' + checksumFile;
-      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Continue</a>';
+      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksum Finsh:<br>' + checksumFile;
+      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="ddWrites(); basicModal.close();">Continue</a>';
       fileChoosed = true;
   } else {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
@@ -280,7 +306,7 @@ function ddWrites(){
 
         emitter.on('error', function(error) {
           document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-          document.getElementById('alert-msg').innerHTML = error;
+          document.getElementById('alert-msg').innerHTML = 'heads-up!<br>' + error + '<br>Please try again' ;
           document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
           console.error(error);
         });
@@ -288,12 +314,12 @@ function ddWrites(){
         emitter.on('done', function(success) {
           if (success) {
             document.getElementById('alert-center').removeChild(document.getElementById("alert-loader"));
-            document.getElementById('alert-msg').innerHTML = 'VirtyDrive succesfully created!<br>' + fileName + ' on: ' + devRoute;
+            document.getElementById('alert-msg').innerHTML = 'VirtyDrive succesfully created!<br>' + fileName + ' on: ' + devRoute + "<br>Now you can boot in your new GNU/Linux";
             document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Finish</a>';
             console.log('Success!');
           } else {
             document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-            document.getElementById('alert-msg').innerHTML = 'Ops! something went wrong,<br>Please try again';
+            document.getElementById('alert-msg').innerHTML = 'heads-up! something went wrong,<br>Please try again';
             document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
             console.log('Failed!');
           }
