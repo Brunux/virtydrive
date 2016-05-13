@@ -24,28 +24,37 @@ Currently supports TOP-10 DistroWatch plus 2 distros for the RapsberryPI Project
 Virty will download the selected distro and write it to a **USB/SD-Card** Drive selected. If you have a iso file of a different distro you can also write it the same way.
 
 ### Weekend build
----
-This is the first build, so issues are expected please if you find one [fill it in](https://github.com/Brunux/virtydrive/issues) we will try to fix it ASAP.
-be aware, the way the iso is downloaded consumes lot of RAM memory (the size of the iso file) there is a WIP to fix it.
+***
 
+This is the first build, so issues are expected please if you find one [fill it in](https://github.com/Brunux/virtydrive/issues "Issues") we will try to fix it asap.
 
-__[Linux x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-linux-x64.tar.gz)__
-Run instructions:
+Be aware, the way the iso is downloaded consumes lot of RAM memory (the size of the iso file) there is a WIP to fix it.
+
+**[Linux x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-linux-x64.tar.gz)**
+
+run instructions:
 
 1. user@LinuxBox$ `tar -xzvf virtydrive-linux-x64.tar.gz`
 2. user@LinuxBox$ `cd virtydrive-linux-x64`
 3. user@LinuxBox$ `sudo ./virtydrive`
----
-__[Windows x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-win32-x64.zip)__
-Run instructions:
+
+***
+
+**[Windows x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-win32-x64.zip)**
+
+run instructions:
+
 1. Uncompress the file.
 2. Go to the new created directory.
 3. Identify `virtydrive.exe` right click and select `run as administrator`.
----
-__[OSX darwin](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-darwin-x64.tar.gz)__
-Run instructions: __not yet tested__
+
+***
+
+**[OSX darwin](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-darwin-x64.tar.gz)**
+run instructions: **not yet tested**
 feedback needed...
----
+
+***
 
 VirtyDrive is based on [electron](https://github.com/electron/electron) framework please download and install.
 
@@ -58,6 +67,7 @@ If you want to run the latest version:
 5. test it.
 
 If you want to contribute to the project (hope so! :) please:
+
 1. Fork our repo.
 2. Code.
 3. Code.
