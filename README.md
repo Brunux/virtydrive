@@ -1,5 +1,5 @@
 # VirtyDrive
-VirtyDrive setups your Linux isos on USB Drives, works on Windows, OSX and Linux.
+Cross-Platform Linux drive creator, VirtyDrive setups your Linux isos on USB Drives, works on Windows, OSX and Linux.
 
 Handy-Dandy tool for booting different Linux distros from USB Drives.
 Currently supports TOP-10 DistroWatch plus 2 distros for the RapsberryPI Project
@@ -21,27 +21,46 @@ Currently supports TOP-10 DistroWatch plus 2 distros for the RapsberryPI Project
 
 *__Note__* that this is a live list so it will be update from time to time depending on distroswatch stats.
 
-Virty will download the selected distro and write it to a **USB/SD-Card** Drive selected. If you have a iso file of a different dristo you can also write it the same way.
+Virty will download the selected distro and write it to a **USB/SD-Card** Drive selected. If you have a iso file of a different distro you can also write it the same way.
 
-VirtyDrive is based on [electron](https://github.com/electron/electron) framework please download it and install it globally.
+### Weekend build
+---
+This is the first build, so issues are expected please if you find one [fill it in](https://github.com/Brunux/virtydrive/issues) we will try to fix it ASAP.
+be aware, the way the iso is downloaded consumes lot of RAM memory (the size of the iso file) there is a WIP to fix it.
 
-Then run:
 
-1. user$ `mkdir development; cd development`
-2. user$ `git clone https://github.com/Brunux/virtydrive.git`
-3. user$ `cd virtydrive`
-4. root# `electron /virty-app` why root? Writing to /devs needs elevated privileges.
-5. test it
-6. ...
-7. fork our repo
-8. code
-9. code
-10. make PR
-
-Please share :)
-
-# Alpha Release!!! [VirtyDrive](https://www.dropbox.com/s/bnvlggkcek3zgi0/virtydrive-linux-x64.tar.gz?dl=0)
+__[Linux x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-linux-x64.tar.gz)__
+Run instructions:
 
 1. user@LinuxBox$ `tar -xzvf virtydrive-linux-x64.tar.gz`
 2. user@LinuxBox$ `cd virtydrive-linux-x64`
 3. user@LinuxBox$ `sudo ./virtydrive`
+---
+__[Windows x64](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-win32-x64.zip)__
+Run instructions:
+1. Uncompress the file.
+2. Go to the new created directory.
+3. Identify `virtydrive.exe` right click and select `run as administrator`.
+---
+__[OSX darwin](https://github.com/Brunux/virtydrive/blob/master/build/daily/virtydrive-darwin-x64.tar.gz)__
+Run instructions: __not yet tested__
+feedback needed...
+---
+
+VirtyDrive is based on [electron](https://github.com/electron/electron) framework please download and install.
+
+If you want to run the latest version:
+
+1. user$ `mkdir development; cd development`
+2. user$ `git clone https://github.com/Brunux/virtydrive.git`
+3. user$ `cd virtydrive`
+4. user$ ` sudo electron /virty-app` why sudo? Writing to /devs needs elevated privileges.
+5. test it.
+
+If you want to contribute to the project (hope so! :) please:
+1. Fork our repo.
+2. Code.
+3. Code.
+4. Make PR.
+
+There is WIP for the unit-test and a wrapper aka docker for the development process.
