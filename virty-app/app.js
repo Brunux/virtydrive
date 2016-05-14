@@ -23,6 +23,7 @@ app.on('ready', function() {
     height: 600,
     'minwidth': 700,
     'minheight': 600,
+    //'resizable': false,
     'acceptFirstMouse': true,
     'titleBarStyle': 'hidden'
   });

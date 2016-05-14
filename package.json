@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "basicmodal": "^3.3.5",
+    "checksum": "^0.1.1",
     "diskpart": "^1.0.1",
     "drivelist": "^3.1.0",
     "etcher-image-write": "^4.0.2",

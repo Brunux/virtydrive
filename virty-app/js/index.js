@@ -2,7 +2,7 @@
  var remote = require('remote');
  var fs = require('fs');
  var dialog = remote.require('dialog');
- var drivelist = require('../node_modules/drivelist');
+ var drivelist = require('drivelist');
 
  var distrosList = require('./js/distros.json');
  var numeral = require('numeral');
@@ -17,10 +17,6 @@
  var devRoute = null;
  var devSelectedName = null;
  var devSelected = false;
-
- var hostInfo = null;
-
- var checksumFile = null;
 
 function listDistros(distrosList){
   var enumDistros = document.getElementById("enum-distros");
@@ -153,17 +149,17 @@ function downloadDistro(){
 
     req.on('data', function(data) {
       dataLength += data.length;
-      document.getElementById('alert-msg').innerHTML = 'Downloading: ' +  numeral(dataLength).format('0.00 b');
+      document.getElementById('alert-msg').innerHTML = 'Downloading: ' +  numeral(dataLength).format('0.00 b') + ' of ' + distrosList[distroToDownload].size + ' MB';
     });
 
     stream.on('end', function () {
       basicModal.show({
-      body: '<center id="alert-center"><p id="alert-msg">Download: Finished<br>File: ' + fileNameRoute + '<br>Do you wanto to checksum the file?"</p></center>',
+      body: '<center id="alert-center"><p id="alert-msg">Download Finish!<br>File: ' + fileNameRoute + ' (' + numeral(dataLength).format('0.00 b') + ' )' + '<br>Do you wanto to checksum the file?"</p></center>',
       closable: true,
       buttons: {
           cancel: {
               title: 'CheckSum',
-              fn: checkSumDownload
+              fn: checkSumFile
           },
           action: {
               title: 'Just write it!',
@@ -186,40 +182,10 @@ function downloadDistro(){
   }
 }
 
-function checkSumDownload() {
-  basicModal.show({
-  body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checksuming... this could take awhile, please wait.</p></center>',
-  closable: true,
-  buttons: {
-      action: {
-          title: 'Please wait',
-          fn: basicModal.visible
-      }
-    }
-  });
-  var md5 = require('md5');
-
-  fs.readFile(fileNameRoute, function(err, buf) {
-    checksumFile = md5(buf);
-
-    if(err === null && distrosList[distroToDownload].checkSum === checksumFile) {
-      document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksums match!<br>' + checksumFile;
-      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="ddWrites(); basicModal.close();">Continue</a>';
-      fileChoosed = true;
-  } else {
-      document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-      document.getElementById('alert-msg').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again.<br>' + checksumFile;
-      console.log (err);
-      fileChoosed = false;
-    }
-  });
-}
-
 //Modify this to ask the user if he/she wants to checksuming the file
-function checkSumIso() {
+function checkSumFile() {
   basicModal.show({
-  body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checksuming... this could take awhile, please wait.</p></center>',
+  body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checksuming... This could take awhile.</p></center>',
   closable: true,
   buttons: {
       action: {
@@ -228,19 +194,20 @@ function checkSumIso() {
       }
     }
   });
-  var md5 = require('md5');
 
-  fs.readFile(fileNameRoute, function(err, buf) {
-    checksumFile = (md5(buf));
-
-    if(err === null) {
+  var checksum = require('checksum');
+  checksum.file(fileNameRoute, function (err, sum) {
+    console.log('Checksuming...');
+    if(err === null && distrosList[distroToDownload].checkSum === sum) {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksum Finsh:<br>' + checksumFile;
+      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksums match!<br>' + sum;
       document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="ddWrites(); basicModal.close();">Continue</a>';
+      console.log(sum + ' null && sum');
       fileChoosed = true;
-  } else {
+    } else {
       document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-      document.getElementById('alert-msg').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again.<br>' + checksumFile;
+      document.getElementById('alert-msg').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again.<br>' + sum;
+      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
       console.log (err);
       fileChoosed = false;
     }
@@ -261,7 +228,6 @@ function confirmWrite() {
       */
       fileChoosed = false;
       infoCheckSumFail();
-      return;
     }
   } else if(fileChoosed) {
     ddWrites();
@@ -303,7 +269,7 @@ function ddWrites(){
         });
 
         emitter.on('progress', function(state) {
-          document.getElementById('alert-msg').innerHTML = 'Writing: ' + Math.round(state.percentage) + '% ' + '(' + numeral(state.transferred).format('0.0b')  + ')<br>' + 'Speed: ' + numeral(state.speed).format('0.00 b') + '/s ' + ' ETA: ' + numeral(state.eta).format('00:00:00');
+          document.getElementById('alert-msg').innerHTML = 'Writing: ' + Math.round(state.percentage) + '% ' + '(' + numeral(state.transferred).format('0.00 b')  + ')<br>' + 'Speed: ' + numeral(state.speed).format('0.00 b') + '/s ' + ' ETA: ' + numeral(state.eta).format('00:00:00');
           console.log(state);
         });
 
@@ -317,7 +283,7 @@ function ddWrites(){
         emitter.on('done', function(success) {
           if (success) {
             document.getElementById('alert-center').removeChild(document.getElementById("alert-loader"));
-            document.getElementById('alert-msg').innerHTML = 'VirtyDrive succesfully created!<br>' + fileName + ' on: ' + devRoute + "<br>Now you can boot in your new GNU/Linux";
+            document.getElementById('alert-msg').innerHTML = 'VirtyDrive succesfully created!<br>' + fileName + ' on: ' + devRoute + "<br>Now you can boot in your new GNU/Linux have fun!";
             document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Finish</a>';
             console.log('Success!');
           } else {
