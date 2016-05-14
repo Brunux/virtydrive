@@ -154,11 +154,11 @@ function downloadDistro(){
 
     stream.on('end', function () {
       basicModal.show({
-      body: 'Download: Finished<br>File: ' + fileNameRoute + "<br>Do you wanto to checksum the file?",
+      body: '<center id="alert-center"><p id="alert-msg">Download: Finished<br>File: ' + fileNameRoute + '<br>Do you wanto to checksum the file?"</p></center>',
       closable: true,
       buttons: {
           cancel: {
-              title: 'Checksume',
+              title: 'CheckSum',
               fn: checkSumDownload
           },
           action: {
@@ -167,7 +167,7 @@ function downloadDistro(){
           }
         }
       });
-      
+
       downloadFile = false;
       fileChoosed = true;
     });

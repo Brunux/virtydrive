@@ -34,6 +34,7 @@
     "filed": "^0.1.0",
     "md5": "^2.1.0",
     "numeral": "^1.5.3",
+    "progress-stream": "^1.2.0",
     "request": "^2.72.0"
   }
 }
