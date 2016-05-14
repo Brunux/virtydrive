@@ -5,6 +5,7 @@
  var drivelist = require('../node_modules/drivelist');
 
  var distrosList = require('./js/distros.json');
+ var numeral = require('numeral');
 
  var fileNameRoute = null;
  var fileName = null;
@@ -108,16 +109,20 @@ function openIso() {
     fileChoosed = true;
     var resetDevList = '<option selected="true" style="display:none;">Distro</option>';
     document.getElementById('enum-distros').innerHTML = resetDevList;
+
     listDistros(distrosList);
+
     document.getElementById('btn-download').innerHTML = "Create";
     document.getElementById('distro-table').style.display = 'none';
     document.getElementById('distro-details').style.display = 'block';
     document.getElementById('iso-table').style.display = 'block';
+
     // Update values with iso info
     document.getElementById('iso-file').innerHTML = fileName;
     document.getElementById('iso-location').innerHTML = fileNameRoute;
-    document.getElementById('iso-checksum').innerHTML = 'XXXXX'; // Set checksume
-    document.getElementById('iso-size').innerHTML = '0000' + ' MB'; // Set size
+    document.getElementById('iso-checksum').innerHTML = 'None'; // Set checksume
+    var fileNameRouteStat = fs.statSync(fileNameRoute);
+    document.getElementById('iso-size').innerHTML = numeral(fileNameRouteStat.size).format('0.00 b');
     downloadFile = false;
     }
  });
@@ -136,7 +141,6 @@ function downloadDistro(){
       }
     });
     var request = require('request');
-    var numeral = require('numeral');
 
     var filed = require('filed');
 
@@ -149,7 +153,7 @@ function downloadDistro(){
 
     req.on('data', function(data) {
       dataLength += data.length;
-      document.getElementById('alert-msg').innerHTML = 'Downloading: ' +  numeral(dataLength).format('0.0b');
+      document.getElementById('alert-msg').innerHTML = 'Downloading: ' +  numeral(dataLength).format('0.00 b');
     });
 
     stream.on('end', function () {
@@ -290,7 +294,6 @@ function ddWrites(){
         });
 
         var imageWrite = require('etcher-image-write');
-        var numeral = require('numeral');
 
         var myStream = fs.createReadStream(fileNameRoute);
 
@@ -300,7 +303,7 @@ function ddWrites(){
         });
 
         emitter.on('progress', function(state) {
-          document.getElementById('alert-msg').innerHTML = 'Writing: ' + Math.round(state.percentage) + '% ' + '(' + numeral(state.transferred).format('0.0b')  + ')<br>' + 'Speed: ' + numeral(state.speed).format('0.00b') + '/s ' + ' ETA: ' + numeral(state.eta).format('00:00:00');
+          document.getElementById('alert-msg').innerHTML = 'Writing: ' + Math.round(state.percentage) + '% ' + '(' + numeral(state.transferred).format('0.0b')  + ')<br>' + 'Speed: ' + numeral(state.speed).format('0.00 b') + '/s ' + ' ETA: ' + numeral(state.eta).format('00:00:00');
           console.log(state);
         });
 
