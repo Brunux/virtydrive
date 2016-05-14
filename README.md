@@ -52,9 +52,7 @@ Download **[OSX darwin](https://github.com/Brunux/virtydrive/blob/master/build/d
 
 ***
 
-VirtyDrive is based on [electron](https://github.com/electron/electron) framework please download and install.
-
-If you want to run the latest version:
+VirtyDrive is based on [electron](https://github.com/electron/electron) framework if you want to run the latest version please download and install it, then:
 
 1. user$ `mkdir development; cd development`
 2. user$ `git clone https://github.com/Brunux/virtydrive.git`
