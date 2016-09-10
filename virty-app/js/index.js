@@ -1,7 +1,5 @@
-
- var remote = require('remote');
  var fs = require('fs');
- var dialog = remote.require('dialog');
+ const {dialog} = require('electron').remote;
  var drivelist = require('drivelist');
 
  var distrosList = require('./js/distros.json');
@@ -19,7 +17,7 @@
  var devSelected = false;
 
 function listDistros(distrosList){
-  var enumDistros = document.getElementById("enum-distros");
+   enumDistros = document.getElementById("enum-distros");
   for(var i=0; i < distrosList.length; i++){
    var optionDistro = document.createElement("option");
    optionDistro.text = distrosList[i].name;
