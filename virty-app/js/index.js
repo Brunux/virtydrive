@@ -11,7 +11,7 @@
  var downloadFile = false;
  var checksumFileDownloaded = null;
  let distroToDownload;
- var devs = [];
+ let devs = [];
  var devRoute = null;
  var devSelectedName = null;
  var devSelected = false;
@@ -41,8 +41,8 @@
 
      console.log(distroDetailsKeys);
 
-     let distroDetailsKeyslength = distroDetailsKeys.length;
-     for (let i = 0; i < distroDetailsKeyslength; i++) {
+     let distroDetailsKeysLength = distroDetailsKeys.length;
+     for (let i = 0; i < distroDetailsKeysLength; i++) {
        document.getElementById('distro-' + distroDetailsKeys[i]).innerHTML = distroDetailsValues[i];
      }
 
@@ -52,21 +52,22 @@
    }
  };
 
-function listDevs() {
-  drivelist.list(function(error, disks) {
-    devs = disks;
-      //if (error) throw error;
-      for(var i=0; i < disks.length; i++){
-        if(disks[i].system === false) {
-          var addDevHtml = '<div id="dev-' + i + '" onclick="devDetails(this.id)"><span class="icon icon icon-drive"></span>' + disks[i].name + '</div><br>';
-          document.getElementById('dev-status').innerHTML = "Devices";
-          document.getElementById('dev-list').insertAdjacentHTML('beforeend', addDevHtml);
-        } else {
-          document.getElementById('dev-status').innerHTML = "<center>No devices found please connect one</center>";
-        }
-      }
-  });
-}
+ let listDevs = () => {
+   drivelist.list((error, disks) => {
+     devs = disks;
+     // if (error) throw error;
+     let disksLength = disks.length;
+     for (let i = 0; i < disksLength; i++) {
+       if (disks[i].system === false) {
+         var addDevHtml = `<div id="dev-${i}" onclick="devDetails(this.id)"><span class="icon icon icon-drive"></span> ${disks[i].name} </div><br>`;
+         document.getElementById('dev-status').innerHTML = 'Devices';
+         document.getElementById('dev-list').insertAdjacentHTML('beforeend', addDevHtml);
+       } else {
+         document.getElementById('dev-status').innerHTML = '<center>No devices found please connect one</center>';
+       }
+     }
+   });
+ };
 
 function devDetails(devId){
   var devIndexSplited = devId.split("-");
