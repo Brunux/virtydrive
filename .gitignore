@@ -1,2 +1,3 @@
 downloads/*.iso
 node_modules/
+.jshintrc
