@@ -16,14 +16,15 @@
  var devSelectedName = null;
  var devSelected = false;
 
-function listDistros(distrosList){
-   enumDistros = document.getElementById("enum-distros");
-  for(var i=0; i < distrosList.length; i++){
-   var optionDistro = document.createElement("option");
-   optionDistro.text = distrosList[i].name;
-   enumDistros.add(optionDistro, enumDistros[i]);
- }
-}
+ let listDistros = (distrosList) => {
+   let enumDistros = document.getElementById('enum-distros');
+   let distrosListLength = distrosList.length;
+   for (let i = 0; i < distrosListLength; i++) {
+     let optionDistro = document.createElement('option');
+     optionDistro.text = distrosList[i].name;
+     enumDistros.add(optionDistro, enumDistros[i]);
+   }
+ };
 
 function selectDistro() {
   var distros = document.getElementById("enum-distros");
