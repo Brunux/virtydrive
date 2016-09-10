@@ -2,7 +2,7 @@
  const {dialog} = require('electron').remote;
  var drivelist = require('drivelist');
 
- var distrosList = require('./js/distros.json');
+ let distrosList = require('./js/distros.json');
  var numeral = require('numeral');
 
  var fileNameRoute = null;
@@ -10,7 +10,7 @@
  var fileChoosed = false;
  var downloadFile = false;
  var checksumFileDownloaded = null;
- var distroToDownload = null;
+ let distroToDownload;
  var devs = [];
  var devRoute = null;
  var devSelectedName = null;
@@ -26,28 +26,31 @@
    }
  };
 
-function selectDistro() {
-  var distros = document.getElementById("enum-distros");
-  distroToDownload = distros.options[distros.selectedIndex].index;
-  console.log (distroToDownload);
-  if(distroToDownload != distrosList.length) {
-    document.getElementById('btn-download').innerHTML = "Download & Create";
-    document.getElementById('iso-table').style.display = 'none';
+ let selectDistro = () => {
+   let distros = document.getElementById('enum-distros');
+   distroToDownload = distros.options[distros.selectedIndex].index;
+   console.log(distroToDownload);
+   if (distroToDownload !== distrosList.length) {
+     document.getElementById('btn-download').innerHTML = 'Download & Create';
+     document.getElementById('iso-table').style.display = 'none';
 
-    var distroDetailsKeys = Object.keys(distrosList[distroToDownload]);
-    var distroDetailsValues = Object.keys(distrosList[distroToDownload]).map(function (value) {return distrosList[distroToDownload][value];});
+     let distroDetailsKeys = Object.keys(distrosList[distroToDownload]);
+     let distroDetailsValues = Object.keys(distrosList[distroToDownload]).map((value) => {
+       return distrosList[distroToDownload][value];
+     });
 
-    console.log(distroDetailsKeys);
+     console.log(distroDetailsKeys);
 
-    for(i=0; i < distroDetailsKeys.length; i++){
-        document.getElementById("distro-"+distroDetailsKeys[i]).innerHTML = distroDetailsValues[i];
-      }
+     let distroDetailsKeyslength = distroDetailsKeys.length;
+     for (let i = 0; i < distroDetailsKeyslength; i++) {
+       document.getElementById('distro-' + distroDetailsKeys[i]).innerHTML = distroDetailsValues[i];
+     }
 
-    document.getElementById('distro-details').style.display = 'block';
-    document.getElementById('distro-table').style.display = 'block';
-    downloadFile = true;
-  }
-}
+     document.getElementById('distro-details').style.display = 'block';
+     document.getElementById('distro-table').style.display = 'block';
+     downloadFile = true;
+   }
+ };
 
 function listDevs() {
   drivelist.list(function(error, disks) {
