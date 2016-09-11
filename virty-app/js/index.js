@@ -1,15 +1,15 @@
- var fs = require('fs');
+ let fs = require('fs');
  const {dialog} = require('electron').remote;
- var drivelist = require('drivelist');
+ let drivelist = require('drivelist');
 
  let distrosList = require('./js/distros.json');
- var numeral = require('numeral');
+ let numeral = require('numeral');
 
  let fileNameRoute;
  let fileName;
- var fileChoosed = false;
- var downloadFile = false;
- var checksumFileDownloaded = null;
+ let fileChoosed = false;
+ let downloadFile = false;
+ let checksumFileDownloaded;
  let distroToDownload;
  let devs = [];
  let devRoute;
@@ -101,7 +101,7 @@
    } else {
      fileNameRoute = fileDeails[0];
      let fileNameSplited = fileNameRoute.split('/');
-     fileName = fileNameSplited[fileNameSplited.length-1];
+     fileName = fileNameSplited[fileNameSplited.length - 1];
      console.log(fileName);
      fileChoosed = true;
      let resetDevList = '<option selected="true" style="display:none;">Distro</option>';
@@ -125,39 +125,39 @@
  });
  };
 
-function downloadDistro(){
-  if (devSelected) {
-    basicModal.show({
-    body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg"></p></center>',
-    closable: true,
-    buttons: {
-      action: {
-          title: 'Cancel',
-          fn: basicModal.close
-        }
-      }
-    });
-    var request = require('request');
-
-    var filed = require('filed');
-
-    fileName = distrosList[distroToDownload].name.replace(/\s+/g, '_') + '.iso';
-    fileNameRoute = 'downloads/' + fileName;
-
-    var stream = filed(fileNameRoute);
-    var req = request(distrosList[distroToDownload].link).pipe(stream);
-    var dataLength = null;
-
-    req.on('data', function(data) {
-      dataLength += data.length;
-      document.getElementById('alert-msg').innerHTML = 'Downloading: ' +  numeral(dataLength).format('0.00 b') + ' of ' + distrosList[distroToDownload].size + ' MB';
-    });
-
-    stream.on('end', function () {
-      basicModal.show({
-      body: '<center id="alert-center"><p id="alert-msg">Download Finish!<br>File: ' + fileNameRoute + ' (' + numeral(dataLength).format('0.00 b') + ' )' + '<br>Do you wanto to checksum the file?"</p></center>',
+ let downloadDistro = () => {
+   if (devSelected) {
+     basicModal.show({
+     body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg"></p></center>',
       closable: true,
       buttons: {
+      action: {
+         title: 'Cancel',
+         fn: basicModal.close
+         }
+       }
+     });
+     let request = require('request');
+
+     let filed = require('filed');
+
+     fileName = distrosList[distroToDownload].name.replace(/\s+/g, '_') + '.iso';
+     fileNameRoute = 'downloads/' + fileName;
+
+     let stream = filed(fileNameRoute);
+     let req = request(distrosList[distroToDownload].link).pipe(stream);
+     let dataLength = null;
+
+     req.on('data', (data) => {
+       dataLength += data.length;
+       document.getElementById('alert-msg').innerHTML = `Downloading: ${numeral(dataLength).format('0.00 b')} of ${distrosList[distroToDownload].size} MB`;
+     });
+
+     stream.on('end', function () {
+       basicModal.show({
+       body: `<center id="alert-center"><p id="alert-msg">Download successful!<br>File: ${fileNameRoute} (${numeral(dataLength).format('0.00 b')}) <br>Do you wanto to checksum the file?</p></center>`,
+       closable: true,
+       buttons: {
           cancel: {
               title: 'CheckSum',
               fn: checkSumFile
@@ -169,19 +169,20 @@ function downloadDistro(){
         }
       });
 
-      downloadFile = false;
-      fileChoosed = true;
-    });
+       downloadFile = false;
+       fileChoosed = true;
+     });
 
-    stream.on('error', function (err) {
-      document.getElementById('alert-msg').innerHTML = 'Error downloading the file<br>Please try again';
-      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
-      fileChoosed = false;
-    });
-  } else {
-    infoSelectDev();
-  }
-}
+     stream.on('error', (err) => {
+       document.getElementById('alert-msg').innerHTML = 'Error downloading the file<br>Please try again';
+       document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
+       console.log(err);
+       fileChoosed = false;
+     });
+   } else {
+     infoSelectDev();
+   }
+ };
 
 //Modify this to ask the user if he/she wants to checksuming the file
 function checkSumFile() {
