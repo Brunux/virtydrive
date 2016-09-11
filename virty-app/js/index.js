@@ -5,8 +5,8 @@
  let distrosList = require('./js/distros.json');
  var numeral = require('numeral');
 
- var fileNameRoute = null;
- var fileName = null;
+ let fileNameRoute;
+ let fileName;
  var fileChoosed = false;
  var downloadFile = false;
  var checksumFileDownloaded = null;
@@ -92,38 +92,38 @@
    document.getElementById('dev-details').style.display = 'block';
  };
 
-function openIso() {
+ let openIso = () => {
  dialog.showOpenDialog({ filters: [
    { name: 'iso', extensions: ['iso'] }
-  ]}, function (fileDeails) {
-  if (fileDeails === undefined) {
-    return;
-  } else {
-    fileNameRoute = fileDeails[0];
-    var fileNameSplited = fileNameRoute.split("/");
-    fileName = fileNameSplited[fileNameSplited.length-1];
-    console.log(fileName);
-    fileChoosed = true;
-    var resetDevList = '<option selected="true" style="display:none;">Distro</option>';
-    document.getElementById('enum-distros').innerHTML = resetDevList;
+   ]}, function (fileDeails) {
+   if (fileDeails === undefined) {
+     return;
+   } else {
+     fileNameRoute = fileDeails[0];
+     let fileNameSplited = fileNameRoute.split('/');
+     fileName = fileNameSplited[fileNameSplited.length-1];
+     console.log(fileName);
+     fileChoosed = true;
+     let resetDevList = '<option selected="true" style="display:none;">Distro</option>';
+     document.getElementById('enum-distros').innerHTML = resetDevList;
 
-    listDistros(distrosList);
+     listDistros(distrosList);
 
-    document.getElementById('btn-download').innerHTML = "Create";
-    document.getElementById('distro-table').style.display = 'none';
-    document.getElementById('distro-details').style.display = 'block';
-    document.getElementById('iso-table').style.display = 'block';
+     document.getElementById('btn-download').innerHTML = 'Create';
+     document.getElementById('distro-table').style.display = 'none';
+     document.getElementById('distro-details').style.display = 'block';
+     document.getElementById('iso-table').style.display = 'block';
 
     // Update values with iso info
-    document.getElementById('iso-file').innerHTML = fileName;
-    document.getElementById('iso-location').innerHTML = fileNameRoute;
-    document.getElementById('iso-checksum').innerHTML = 'None'; // Set checksume
-    var fileNameRouteStat = fs.statSync(fileNameRoute);
-    document.getElementById('iso-size').innerHTML = numeral(fileNameRouteStat.size).format('0.00 b');
-    downloadFile = false;
-    }
+     document.getElementById('iso-file').innerHTML = fileName;
+     document.getElementById('iso-location').innerHTML = fileNameRoute;
+     document.getElementById('iso-checksum').innerHTML = 'None'; // Set checksume
+     var fileNameRouteStat = fs.statSync(fileNameRoute);
+     document.getElementById('iso-size').innerHTML = numeral(fileNameRouteStat.size).format('0.00 b');
+     downloadFile = false;
+   }
  });
-}
+ };
 
 function downloadDistro(){
   if (devSelected) {
