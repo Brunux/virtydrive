@@ -10,6 +10,7 @@
     "url": "https://github.com/Brunux/virtydrive.git"
   },
   "devDependencies": {
+    "electron": "^1.3.5",
     "semistandard": "^9.0.0"
   },
   "build": {

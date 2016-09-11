@@ -23,6 +23,15 @@ Currently supports TOP-10 DistroWatch plus 2 distros for the RapsberryPI Project
 
 Virty will download the selected distro and write it to a **USB/SD-Card** Drive selected. If you have a iso file of a different distro you can also write it the same way.
 
+VirtyDrive is based on [electron](https://github.com/electron/electron) framework try latest version, open a terminal and:
+
+1. user$ `mkdir development; cd development`
+2. user$ `git clone https://github.com/Brunux/virtydrive.git`
+3. user$ `cd virtydrive`
+x. user$ `npm install` this will install all dependencies.
+4. user$ ` sudo electron virty-app/` why sudo? Writing to /devs needs elevated privileges.
+5. test it.
+
 ### Weekend build
 ***
 
@@ -51,14 +60,6 @@ Download **[OSX darwin](https://github.com/Brunux/virtydrive/blob/master/build/d
 1. **not yet tested** feedback needed...
 
 ***
-
-VirtyDrive is based on [electron](https://github.com/electron/electron) framework if you want to run the latest version please download and install it, then:
-
-1. user$ `mkdir development; cd development`
-2. user$ `git clone https://github.com/Brunux/virtydrive.git`
-3. user$ `cd virtydrive`
-4. user$ ` sudo electron virty-app` why sudo? Writing to /devs needs elevated privileges.
-5. test it.
 
 If you want to contribute to the project (hope so! :) please:
 
