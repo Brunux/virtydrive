@@ -54,15 +54,22 @@
 
  let listDevs = () => {
    drivelist.list((error, disks) => {
-     devs = disks;
-     // if (error) throw error;
-     let disksLength = disks.length;
-     for (let i = 0; i < disksLength; i++) {
-       if (disks[i].system === false) {
-         var addDevHtml = `<div id="dev-${i}" onclick="devDetails(this.id)"><span class="icon icon icon-drive"></span> ${disks[i].name} </div><br>`;
-         document.getElementById('dev-status').innerHTML = 'Devices';
-         document.getElementById('dev-list').insertAdjacentHTML('beforeend', addDevHtml);
-       } else {
+     console.log(disks);
+     if (error) {
+       console.log('Error getting drives: ' + error);
+     } else {
+       devs = disks;
+       let devAvailable = false;
+       let disksLength = disks.length;
+       for (let i = 0; i < disksLength; i++) {
+         if (disks[i].system === false) {
+           let addDevHtml = `<div id="dev-${i}" onclick="devDetails(this.id)"><span class="icon icon icon-drive"></span> ${disks[i].name} </div><br>`;
+           document.getElementById('dev-status').innerHTML = 'Devices';
+           document.getElementById('dev-list').insertAdjacentHTML('beforeend', addDevHtml);
+           devAvailable = true;
+         }
+       }
+       if (!devAvailable) {
          document.getElementById('dev-status').innerHTML = '<center>No devices found please connect one</center>';
        }
      }
@@ -73,6 +80,7 @@
    let devIndexSplited = devId.split('-');
    let devIndex = devIndexSplited[1];
    delete devs[devIndex].raw;
+   devs[devIndex].size = typeof devs[devIndex].size === 'number' ? numeral(devs[devIndex].size).format('0.00 b') : devs[devIndex].size;
    console.log(devs[devIndex]);
    devRoute = devs[devIndex].device;
    devSelectedName = devs[devIndex].name;
@@ -83,7 +91,7 @@
      return devs[devIndex][value];
    });
    for (let key in devDetailsKeys) {
-     if (devDetailsKeys[key]) {
+     if (devDetailsValues[key]) {
        document.getElementById('detail-' + devDetailsKeys[key]).innerHTML = devDetailsValues[key].toString();
      } else {
        document.getElementById('detail-' + devDetailsKeys[key]).innerHTML = 'none';
@@ -118,7 +126,7 @@
      document.getElementById('iso-file').innerHTML = fileName;
      document.getElementById('iso-location').innerHTML = fileNameRoute;
      document.getElementById('iso-checksum').innerHTML = 'None'; // Set checksume
-     var fileNameRouteStat = fs.statSync(fileNameRoute);
+     let fileNameRouteStat = fs.statSync(fileNameRoute);
      document.getElementById('iso-size').innerHTML = numeral(fileNameRouteStat.size).format('0.00 b');
      downloadFile = false;
    }
@@ -184,37 +192,37 @@
    }
  };
 
-//Modify this to ask the user if he/she wants to checksuming the file
-function checkSumFile() {
+ // Modify this to ask the user if he/she wants to checksuming the file
+ let checkSumFile = () => {
    basicModal.show({
-  body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checksuming... This could take awhile.</p></center>',
-  closable: true,
-  buttons: {
-      action: {
-          title: 'Please wait',
-          fn: basicModal.visible
-      }
-    }
-  });
-
-  var checksum = require('checksum');
-  checksum.file(fileNameRoute, function (err, sum) {
-    console.log('Checksuming...');
-    if(err === null && distrosList[distroToDownload].checkSum === sum) {
-      document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-      document.getElementById('alert-msg').innerHTML = 'Awesome... Checksums match!<br>' + sum;
-      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="ddWrites(); basicModal.close();">Continue</a>';
-      console.log(sum + ' null && sum');
-      fileChoosed = true;
-    } else {
-      document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-      document.getElementById('alert-msg').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again.<br>' + sum;
-      document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
-      console.log (err);
-      fileChoosed = false;
-    }
-  });
-}
+   body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checksuming... This could take awhile.</p></center>',
+   closable: true,
+   buttons: {
+       action: {
+           title: 'Please wait',
+           fn: basicModal.visible
+       }
+     }
+   });
+   // Check documentation how to pass the kind of checksum: md5 or sha1
+   let checksum = require('checksum');
+   checksum.file(fileNameRoute, (err, sum) => {
+     console.log('Checksuming...');
+     if (err === null && distrosList[distroToDownload].checkSum === sum) {
+       document.getElementById('alert-center').removeChild(document.getElementById('alert-loader'));
+       document.getElementById('alert-msg').innerHTML = 'Awesome... Checksums match!<br>' + sum;
+       document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="ddWrites(); basicModal.close();">Continue</a>';
+       console.log(sum + ' null && sum');
+       fileChoosed = true;
+     } else {
+       document.getElementById('alert-center').removeChild(document.getElementById('alert-loader'));
+       document.getElementById('alert-msg').innerHTML = 'Sorry<br>Checksums do not match<br>Try to download it again.<br>' + sum;
+       document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
+       console.log(err);
+       fileChoosed = false;
+     }
+   });
+ };
 
  let confirmWrite = () => {
    if (downloadFile) {
