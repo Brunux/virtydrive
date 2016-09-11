@@ -12,9 +12,9 @@
  var checksumFileDownloaded = null;
  let distroToDownload;
  let devs = [];
- var devRoute = null;
- var devSelectedName = null;
- var devSelected = false;
+ let devRoute;
+ let devSelectedName;
+ let devSelected = false;
 
  let listDistros = (distrosList) => {
    let enumDistros = document.getElementById('enum-distros');
@@ -69,30 +69,28 @@
    });
  };
 
-function devDetails(devId){
-  var devIndexSplited = devId.split("-");
-  var devIndex = devIndexSplited[1];
-  console.log(devs[devIndex]);
-  devRoute = devs[devIndex].device;
-  devSelectedName = devs[devIndex].name;
-  devSelected = true;
+ let devDetails = (devId) => {
+   let devIndexSplited = devId.split('-');
+   let devIndex = devIndexSplited[1];
+   delete devs[devIndex].raw;
+   console.log(devs[devIndex]);
+   devRoute = devs[devIndex].device;
+   devSelectedName = devs[devIndex].name;
+   devSelected = true;
 
-
-  var devDetailsKeys = Object.keys(devs[devIndex]);
-  var devDetailsValues = Object.keys(devs[devIndex]).map(function (value) {return devs[devIndex][value];});
-
-  console.log(devDetailsKeys);
-
-  for(i=0; i < devDetailsKeys.length; i++){
-    if (devDetailsValues[i] === null) {
-      document.getElementById("detail-"+devDetailsKeys[i]).innerHTML = 'none';
-    } else {
-      document.getElementById("detail-"+devDetailsKeys[i]).innerHTML = devDetailsValues[i];
-    }
-  }
-
-  document.getElementById('dev-details').style.display = 'block';
-}
+   let devDetailsKeys = Object.keys(devs[devIndex]);
+   let devDetailsValues = Object.keys(devs[devIndex]).map((value) => {
+     return devs[devIndex][value];
+   });
+   for (let key in devDetailsKeys) {
+     if (devDetailsKeys[key]) {
+       document.getElementById('detail-' + devDetailsKeys[key]).innerHTML = devDetailsValues[key].toString();
+     } else {
+       document.getElementById('detail-' + devDetailsKeys[key]).innerHTML = 'none';
+     }
+   }
+   document.getElementById('dev-details').style.display = 'block';
+ };
 
 function openIso() {
  dialog.showOpenDialog({ filters: [
