@@ -28,9 +28,9 @@ VirtyDrive is based on [electron](https://github.com/electron/electron) framewor
 1. user$ `mkdir development; cd development`
 2. user$ `git clone https://github.com/Brunux/virtydrive.git`
 3. user$ `cd virtydrive`
-x. user$ `npm install` this will install all dependencies.
-4. user$ ` sudo electron virty-app/` why sudo? Writing to /devs needs elevated privileges.
-5. test it.
+4. user$ `npm install` this will install all dependencies.
+5. user$ ` sudo electron virty-app/` why sudo? Writing to /devs needs elevated privileges.
+6. test it.
 
 ### Weekend build
 ***
