@@ -153,7 +153,7 @@
        document.getElementById('alert-msg').innerHTML = `Downloading: ${numeral(dataLength).format('0.00 b')} of ${distrosList[distroToDownload].size} MB`;
      });
 
-     stream.on('end', function () {
+     stream.on('end', () => {
        basicModal.show({
        body: `<center id="alert-center"><p id="alert-msg">Download successful!<br>File: ${fileNameRoute} (${numeral(dataLength).format('0.00 b')}) <br>Do you wanto to checksum the file?</p></center>`,
        closable: true,
@@ -186,7 +186,7 @@
 
 //Modify this to ask the user if he/she wants to checksuming the file
 function checkSumFile() {
-  basicModal.show({
+   basicModal.show({
   body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checksuming... This could take awhile.</p></center>',
   closable: true,
   buttons: {
@@ -216,27 +216,28 @@ function checkSumFile() {
   });
 }
 
-function confirmWrite() {
-  if (downloadFile){
-    try {
-      downloadDistro();
-      } catch (err) {
-      infoDownloadFail();
+ let confirmWrite = () => {
+   if (downloadFile) {
+     try {
+       downloadDistro();
+     } catch (err) {
+       infoDownloadFail();
       /*
         Set diferent dialog for erros:
         No enough space on hdd
         No Internet conection
         ...
       */
-      fileChoosed = false;
-      infoCheckSumFail();
-    }
-  } else if(fileChoosed) {
-    ddWrites();
-  } else {
-    infoSelectSourceFile();
-  }
-}
+       fileChoosed = false;
+       infoCheckSumFail();
+       console.log(err);
+     }
+   } else if (fileChoosed) {
+     ddWrites();
+   } else {
+     infoSelectSourceFile();
+   }
+ };
 
 function ddWrites(){
   if(devSelected) {
