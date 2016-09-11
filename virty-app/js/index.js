@@ -297,70 +297,72 @@ function checkSumFile() {
            }
          });
        }
-    } else {
-      infoSelectSourceFile();
+     } else {
+       infoSelectSourceFile();
+     }
+   } else {
+     infoSelectDev();
+   }
+ };
+
+ let infoSelectSourceFile = () => {
+   dialog.showMessageBox({
+     type: 'info',
+     buttons: ['OK'],
+     title : 'Select a source',
+     message: '',
+     detail: 'Please select an .iso file or a distribution to download'
+   });
+ };
+
+ let infoSelectDev = () => {
+   dialog.showMessageBox({
+     type: 'info',
+     buttons: ['OK'],
+     title : 'Select a Device',
+     message: '',
+     detail: 'Please select a divice to setup a distro'
+   });
+ };
+
+ let infoDownloadFail = () => {
+   dialog.showMessageBox({
+     type: 'info',
+     buttons: ['OK'],
+     title : 'Fail',
+     message: '',
+     detail: 'Download fail! Please, check your Internet connection and try again'
+   });
+ };
+
+ let infoCheckSumFail = () => {
+   dialog.showMessageBox({
+     type: 'info',
+     buttons: ['OK'],
+     title : 'Fail',
+     message: '',
+     detail: 'Download/Checksum fail! Please, check that you have enough space and writing permissions avalable on disk'
+   });
+ };
+
+ let infoCheckDevs = () => {
+   document.getElementById('dev-details').style.display = 'none';
+   let allDevsListed = document.getElementById('dev-list');
+   while (allDevsListed.hasChildNodes()) {
+     allDevsListed.removeChild(allDevsListed.lastChild);
+   }
+   devSelected = false;
+   basicModal.show({
+   body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checking for Drives</p></center>',
+   closable: true,
+   callback: () => {
+      setTimeout(basicModal.close, 3000);
+      setTimeout(listDevs, 3000); },
+   buttons: {
+       action: {
+           title: 'Please wait',
+           fn: basicModal.visible
+       }
     }
-  } else {
-    infoSelectDev();
-  }
-}
-
-function infoSelectSourceFile() {
-  dialog.showMessageBox({
-    type: "info",
-    buttons: ["OK"],
-    title : "Select a source",
-    message: "",
-    detail: "Please select an .iso file or a distribution to download"
-  });
-}
-
-function infoSelectDev() {
-  dialog.showMessageBox({
-    type: "info",
-    buttons: ["OK"],
-    title : "Select a Device",
-    message: "",
-    detail: "Please select a divice to setup a distro"
-  });
-}
-
-function infoDownloadFail(){
-  dialog.showMessageBox({
-    type: "info",
-    buttons: ["OK"],
-    title : "Fail",
-    message: "",
-    detail: "Download fail! Please, check your Internet connection and try again"
-  });
-}
-
-function infoCheckSumFail(){
-  dialog.showMessageBox({
-    type: "info",
-    buttons: ["OK"],
-    title : "Fail",
-    message: "",
-    detail: "Download/Checksum fail! Please, check that you have enough space and writing permissions avalable on disk"
-  });
-}
-
-function infoCheckDevs(){
-  document.getElementById('dev-details').style.display = 'none';
-  var allDevsListed = document.getElementById('dev-list');
-  while (allDevsListed.hasChildNodes()) {
-    allDevsListed.removeChild(allDevsListed.lastChild);
-}
-  devSelected = false;
-  basicModal.show({
-  body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg">Checking for Drives</p></center>',
-  closable: true,
-  callback: function() { setTimeout(basicModal.close, 3000); setTimeout(listDevs, 3000);},
-  buttons: {
-      action: {
-          title: 'Please wait',
-          fn: basicModal.visible
-      }
-    }
-  });
-}
+   });
+ };
