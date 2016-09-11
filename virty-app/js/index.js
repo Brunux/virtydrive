@@ -239,64 +239,64 @@ function checkSumFile() {
    }
  };
 
-function ddWrites(){
-  if(devSelected) {
-    if(fileChoosed) {
-      var confirmWriteResponse = dialog.showMessageBox({
-        type: "question",
-        buttons: ["Cancel", "Yes" ],
-        title : "Write ISO file",
-        message: "Please confirm",
-        detail: "All data on " + devSelectedName + " will be overwriten with " + fileName + " data.\n Would you like to proceed?"
-      });
+ let ddWrites = () => {
+   if (devSelected) {
+     if (fileChoosed) {
+       let confirmWriteResponse = dialog.showMessageBox({
+         type: 'question',
+         buttons: ['Cancel', 'Yes' ],
+         title : 'Write ISO file',
+         message: 'Please confirm',
+         detail: `All data on ${devSelectedName} will be overwriten with ${fileName} data.\nWould you like to proceed?`
+       });
 
-      if (confirmWriteResponse === 1) {
-        basicModal.show({
-        body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg"></p></center>',
-        closable: true,
-        buttons: {
-          action: {
-              title: 'Please wait',
-              fn: basicModal.visible
-            }
-          }
-        });
+       if (confirmWriteResponse === 1) {
+         basicModal.show({
+         body: '<center id="alert-center"><img id="alert-loader" src="../img/ajax_loader_rocket_48.gif"><p id="alert-msg"></p></center>',
+         closable: true,
+         buttons: {
+           action: {
+               title: 'Please wait',
+               fn: basicModal.visible
+             }
+           }
+         });
 
-        var imageWrite = require('etcher-image-write');
+         let imageWrite = require('etcher-image-write');
 
-        var myStream = fs.createReadStream(fileNameRoute);
+         let myStream = fs.createReadStream(fileNameRoute);
 
-        var emitter = imageWrite.write(devRoute, myStream, {
-          check: false,
-          size: fs.statSync(fileNameRoute).size
-        });
+         let emitter = imageWrite.write(devRoute, myStream, {
+           check: false,
+           size: fs.statSync(fileNameRoute).size
+         });
 
-        emitter.on('progress', function(state) {
-          document.getElementById('alert-msg').innerHTML = 'Writing: ' + Math.round(state.percentage) + '% ' + '(' + numeral(state.transferred).format('0.00 b')  + ')<br>' + 'Speed: ' + numeral(state.speed).format('0.00 b') + '/s ' + ' ETA: ' + numeral(state.eta).format('00:00:00');
-          console.log(state);
-        });
+         emitter.on('progress', (state) => {
+           document.getElementById('alert-msg').innerHTML = `Writing: ${Math.round(state.percentage)} % (${numeral(state.transferred).format('0.00 b')})<br>Speed: ${numeral(state.speed).format('0.00 b')}/s ETA: ${numeral(state.eta).format('00:00:00')}`;
+           console.log(state);
+         });
 
-        emitter.on('error', function(error) {
-          document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-          document.getElementById('alert-msg').innerHTML = 'heads-up!<br>' + error + '<br>Please try again' ;
-          document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
-          console.error(error);
-        });
+         emitter.on('error', (error) => {
+           document.getElementById('alert-center').removeChild(document.getElementById('alert-loader'));
+           document.getElementById('alert-msg').innerHTML = `heads-up!<br>${error}<br>Please try again`;
+           document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
+           console.error(error);
+         });
 
-        emitter.on('done', function(success) {
-          if (success) {
-            document.getElementById('alert-center').removeChild(document.getElementById("alert-loader"));
-            document.getElementById('alert-msg').innerHTML = 'VirtyDrive succesfully created!<br>' + fileName + ' on: ' + devRoute + "<br>Now you can boot in your new GNU/Linux have fun!";
-            document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Finish</a>';
-            console.log('Success!');
-          } else {
-            document.getElementById("alert-center").removeChild(document.getElementById("alert-loader"));
-            document.getElementById('alert-msg').innerHTML = 'heads-up! something went wrong,<br>Please try again';
-            document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
-            console.log('Failed!');
-          }
-        });
-      }
+         emitter.on('done', (success) => {
+           if (success) {
+             document.getElementById('alert-center').removeChild(document.getElementById('alert-loader'));
+             document.getElementById('alert-msg').innerHTML = `VirtyDrive succesfully created!<br> ${fileName} on: ${devRoute} <br>Now you can boot in your new GNU/Linux have fun!`;
+             document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Finish</a>';
+             console.log('Success!');
+           } else {
+             document.getElementById('alert-center').removeChild(document.getElementById('alert-loader'));
+             document.getElementById('alert-msg').innerHTML = 'heads-up! something went wrong,<br>Please try again';
+             document.getElementsByClassName('basicModal__buttons')[0].innerHTML = '<a id="basicModal__action" class="basicModal__button" onclick="basicModal.close();">Close</a>';
+             console.log('Failed!');
+           }
+         });
+       }
     } else {
       infoSelectSourceFile();
     }
